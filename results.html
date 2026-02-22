@@ -377,6 +377,50 @@
             text-align: center;
             margin-top: 32px;
         }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                margin: 20px auto;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle .number {
+                font-size: 36px;
+            }
+
+            .issues-grid,
+            .exercises-grid,
+            .consultants-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+            }
+
+            .ai-disclaimer {
+                flex-direction: column;
+                text-align: left;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 

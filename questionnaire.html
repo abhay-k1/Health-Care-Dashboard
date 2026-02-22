@@ -286,6 +286,39 @@
             border-color: #0ea5e9;
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                margin: 20px auto;
+            }
+
+            .question-card,
+            .demographics-card {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .option-btn {
+                padding: 16px 12px;
+                font-size: 14px;
+                width: 100%;
+                text-align: left;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 

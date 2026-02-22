@@ -696,6 +696,42 @@
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                margin: 20px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .branding {
+                padding: 32px 24px;
+            }
+
+            .branding h1 {
+                font-size: 32px;
+            }
+
+            .login-form-container {
+                padding: 32px 24px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
