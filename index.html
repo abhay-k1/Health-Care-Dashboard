@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Health Analytics Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animate-gradient {
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+        }
+
+        /* Login Page Styles */
+        .login-page {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .branding {
+            display: none;
+        }
+
+        .login-form-container {
+            width: 100%;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        .forgot-link {
+            color: #0ea5e9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: #0284c7;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            color: white;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .login-button:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #0ea5e9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            color: #0284c7;
+        }
+
+        @media (min-width: 768px) {
+            .branding {
+                display: block;
+            }
+
+            .mobile-title {
+                display: none;
+            }
+        }
+
+        .branding h1 {
+            font-size: 48px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .branding h1 .highlight {
+            color: #0ea5e9;
+            display: block;
+        }
+
+        .branding p {
+            font-size: 20px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: start;
+            margin-bottom: 24px;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .feature-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #0ea5e9;
+        }
+
+        .feature-content h3 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .feature-content p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .mobile-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .mobile-title h1 {
+            font-size: 32px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .mobile-title p {
+            color: #6b7280;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-page {
+            display: none;
+            background: #f9fafb;
+            min-height: 100vh;
+        }
+
+        .dashboard-page.active {
+            display: block;
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .logout-button {
+            background: #0ea5e9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .logout-button:hover {
+            background: #0284c7;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #111827;
+            margin-top: 8px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+        }
+
+        .stat-icon.green {
+            background: #d1fae5;
+        }
+
+        .stat-icon.purple {
+            background: #e9d5ff;
+        }
+
+        .stat-icon.orange {
+            background: #fed7aa;
+        }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .stat-icon.blue svg {
+            color: #2563eb;
+        }
+
+        .stat-icon.green svg {
+            color: #059669;
+        }
+
+        .stat-icon.purple svg {
+            color: #7c3aed;
+        }
+
+        .stat-icon.orange svg {
+            color: #ea580c;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-text {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* OTP Login Styles */
+        .otp-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .otp-section.active {
+            display: block;
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .otp-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .send-otp-btn {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 16px;
+        }
+
+        .send-otp-btn:hover {
+            background: #059669;
+        }
+
+        .send-otp-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .login-option-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .login-option-btn.active {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            color: #0ea5e9;
+        }
+
+        /* Admin Dashboard Styles */
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .space-y-2>*+* {
+            margin-top: 0.5rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .p-3 {
+            padding: 0.75rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .bg-blue-50 {
+            background-color: #eff6ff;
+        }
+
+        .bg-green-50 {
+            background-color: #f0fdf4;
+        }
+
+        .bg-orange-50 {
+            background-color: #fff7ed;
+        }
+
+        .bg-red-50 {
+            background-color: #fef2f2;
+        }
+
+        .text-blue-600 {
+            color: #2563eb;
+        }
+
+        .text-green-600 {
+            color: #16a34a;
+        }
+
+        .text-orange-600 {
+            color: #ea580c;
+        }
+
+        .text-red-600 {
+            color: #dc2626;
+        }
+
+        .text-gray-700 {
+            color: #374151;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page animate-gradient">
+        <div class="login-container">
+            <!-- Branding Section (Desktop) -->
+            <div class="branding">
+                <h1>
+                    Youth Health
+                    <span class="highlight">Analytics Dashboard</span>
+                </h1>
+                <p>Empowering data-driven decisions for youth health and wellness</p>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Comprehensive Analytics</h3>
+                        <p>Track and analyze youth health metrics</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Real-time Insights</h3>
+                        <p>Get instant access to health trends and patterns</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Secure & Private</h3>
+                        <p>Your data is protected with enterprise-grade security</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <div class="login-form-container">
+                <div class="login-card">
+                    <div class="mobile-title">
+                        <h1>Youth Health Analytics</h1>
+                        <p>Welcome back</p>
+                    </div>
+
+                    <div class="branding">
+                        <h2 class="login-title">Welcome back</h2>
+                        <p class="login-subtitle">Sign in to access your dashboard</p>
+                    </div>
+
+                    <div class="login-options">
+                        <button class="login-option-btn active" id="passwordLoginBtn"
+                            onclick="switchLoginMode('password')">Password Login</button>
+                        <button class="login-option-btn" id="otpLoginBtn" onclick="switchLoginMode('otp')">OTP
+                            Login</button>
+                    </div>
+
+                    <!-- Password Login Form -->
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required>
+                        </div>
+
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember" style="margin: 0; font-weight: normal;">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-link">Forgot password?</a>
+                        </div>
+
+                        <div class="error-message" id="errorMessage"></div>
+
+                        <button type="submit" class="login-button" id="loginButton">Sign in</button>
+                    </form>
+
+                    <!-- OTP Login Form -->
+                    <form id="otpLoginForm" class="login-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="otpEmail">Email Address</label>
+                            <input type="email" id="otpEmail" name="otpEmail" placeholder="Enter your email" required>
+                        </div>
+
+                        <button type="button" class="send-otp-btn" id="sendOtpBtn" onclick="sendOTP()">Send OTP</button>
+
+                        <div class="otp-section" id="otpSection">
+                            <div class="otp-info">
+                                <strong>OTP Sent!</strong> Check your email for the 6-digit code. (Demo: OTP is <span
+                                    id="demoOtp" style="font-weight: bold;"></span>)
+                            </div>
+                            <div class="form-group">
+                                <label>Enter OTP</label>
+                                <div class="otp-input-group">
+                                    <input type="text" class="otp-input" id="otp1" maxlength="1"
+                                        oninput="moveToNext(this, 'otp2')"
+                                        onkeyup="handleOtpKeyup(event, 'otp1', null)">
+                                    <input type="text" class="otp-input" id="otp2" maxlength="1"
+                                        oninput="moveToNext(this, 'otp3')"
+                                        onkeyup="handleOtpKeyup(event, 'otp2', 'otp1')">
+                                    <input type="text" class="otp-input" id="otp3" maxlength="1"
+                                        oninput="moveToNext(this, 'otp4')"
+                                        onkeyup="handleOtpKeyup(event, 'otp3', 'otp2')">
+                                    <input type="text" class="otp-input" id="otp4" maxlength="1"
+                                        oninput="moveToNext(this, 'otp5')"
+                                        onkeyup="handleOtpKeyup(event, 'otp4', 'otp3')">
+                                    <input type="text" class="otp-input" id="otp5" maxlength="1"
+                                        oninput="moveToNext(this, 'otp6')"
+                                        onkeyup="handleOtpKeyup(event, 'otp5', 'otp4')">
+                                    <input type="text" class="otp-input" id="otp6" maxlength="1"
+                                        onkeyup="handleOtpKeyup(event, 'otp6', 'otp5')">
+                                </div>
+                            </div>
+
+                            <div class="error-message" id="otpErrorMessage"></div>
+
+                            <button type="submit" class="login-button" id="verifyOtpBtn">Verify OTP</button>
+                        </div>
+                    </form>
+
+                    <div
+                        style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; margin-top: 24px; margin-bottom: 16px;">
+                        <p style="font-size: 13px; color: #0c4a6e; margin-bottom: 8px; font-weight: 600;">📋 Admin Test
+                            Credentials:</p>
+                        <div style="font-size: 12px; color: #075985; line-height: 1.8;">
+                            <div><strong>Email:</strong> admin@health.com | <strong>Password:</strong> admin123</div>
+                            <div style="margin-top: 4px; color: #64748b; font-size: 11px;">(Or use any email/password
+                                for demo)</div>
+                        </div>
+                    </div>
+
+                    <div class="signup-link">
+                        Don't have an account? <a href="#">Contact administrator</a>
+                    </div>
+                    <div
+                        style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                        <a href="user-login.html" style="color: #6b7280; text-decoration: none; font-size: 13px;">User
+                            Login →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="dashboard-page">
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <h1 class="header-title">Youth Health Analytics Dashboard</h1>
+                    <p class="header-subtitle">Welcome to your dashboard</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <a href="admin-analytics.html"
+                        style="background: #0ea5e9; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">Analytics
+                        Dashboard</a>
+                    <button class="logout-button" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Participants</div>
+                            <div class="stat-value" id="adminTotalParticipants">0</div>
+                        </div>
+                        <div class="stat-icon blue">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Active Programs</div>
+                            <div class="stat-value" id="adminActivePrograms">0</div>
+                        </div>
+                        <div class="stat-icon green">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Health Reports Generated</div>
+                            <div class="stat-value" id="adminHealthReports">0</div>
+                        </div>
+                        <div class="stat-icon purple">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Completion Rate</div>
+                            <div class="stat-value" id="adminCompletionRate">0%</div>
+                        </div>
+                        <div class="stat-icon orange">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Insights Section -->
+            <div class="dashboard-card" style="margin-bottom: 24px;">
+                <h2 class="dashboard-title">User Insights & Analytics</h2>
+                <div id="userInsights">
+                    <p class="dashboard-text" style="margin-bottom: 16px;">Viewing aggregated user health data from
+                        questionnaires</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                        <div style="background: #eff6ff; padding: 16px; border-radius: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Total Users Logged In</p>
+                            <p style="font-size: 24px; font-weight: bold; color: #2563eb;" id="totalUsers">0</p>
+                        </div>
+                        <div style="background: #f0fdf4; padding: 16px; border-radius: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Completed Assessments</p>
+                            <p style="font-size: 24px; font-weight: bold; color: #16a34a;" id="completedAssessments">0
+                            </p>
+                        </div>
+                        <div style="background: #fff7ed; padding: 16px; border-radius: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Users Needing Support</p>
+                            <p style="font-size: 24px; font-weight: bold; color: #ea580c;" id="usersNeedingSupport">0
+                            </p>
+                        </div>
+                    </div>
+                    <div id="commonIssues">
+                        <h3 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 12px;">Common
+                            Health Issues Identified</h3>
+                        <div id="issuesList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h2 class="dashboard-title">Dashboard Overview</h2>
+                <p class="dashboard-text">
+                    Monitor user health trends, track assessment completions, and identify areas where users need
+                    additional support.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+        const loginForm = document.getElementById('loginForm');
+        const otpLoginForm = document.getElementById('otpLoginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const otpErrorMessage = document.getElementById('otpErrorMessage');
+        const loginButton = document.getElementById('loginButton');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+
+        let generatedOTP = '';
+        let otpExpiryTime = null;
+
+        // Check if already logged in
+        function checkAuth() {
+            if (localStorage.getItem('isAuthenticated') === 'true') {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            loginPage.style.display = 'flex';
+            dashboardPage.classList.remove('active');
+        }
+
+        // Switch between password and OTP login
+        function switchLoginMode(mode) {
+            const passwordBtn = document.getElementById('passwordLoginBtn');
+            const otpBtn = document.getElementById('otpLoginBtn');
+
+            if (mode === 'password') {
+                passwordBtn.classList.add('active');
+                otpBtn.classList.remove('active');
+                loginForm.style.display = 'block';
+                otpLoginForm.style.display = 'none';
+                document.getElementById('otpSection').classList.remove('active');
+                clearOtpInputs();
+            } else {
+                passwordBtn.classList.remove('active');
+                otpBtn.classList.add('active');
+                loginForm.style.display = 'none';
+                otpLoginForm.style.display = 'block';
+            }
+        }
+
+        // Generate 6-digit OTP
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Send OTP
+        function sendOTP() {
+            const email = document.getElementById('otpEmail').value;
+
+            if (!email) {
+                showOtpError('Please enter your email address');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showOtpError('Please enter a valid email address');
+                return;
+            }
+
+            // Generate OTP
+            generatedOTP = generateOTP();
+            otpExpiryTime = Date.now() + (5 * 60 * 1000); // 5 minutes
+
+            // Store OTP in localStorage for demo
+            localStorage.setItem('adminOTP', generatedOTP);
+            localStorage.setItem('adminOTPEmail', email);
+            localStorage.setItem('adminOTPExpiry', otpExpiryTime.toString());
+
+            // Show OTP section
+            document.getElementById('otpSection').classList.add('active');
+            document.getElementById('demoOtp').textContent = generatedOTP;
+
+            // Disable send button temporarily
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'OTP Sent!';
+
+            // Re-enable after 30 seconds
+            setTimeout(() => {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Resend OTP';
+            }, 30000);
+
+            // Clear previous OTP inputs
+            clearOtpInputs();
+            document.getElementById('otp1').focus();
+        }
+
+        // OTP Login
+        otpLoginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const enteredOTP = getEnteredOTP();
+            const storedOTP = localStorage.getItem('adminOTP');
+            const storedEmail = localStorage.getItem('adminOTPEmail');
+            const expiryTime = parseInt(localStorage.getItem('adminOTPExpiry') || '0');
+            const currentEmail = document.getElementById('otpEmail').value;
+
+            // Hide previous errors
+            otpErrorMessage.classList.remove('show');
+            otpErrorMessage.textContent = '';
+
+            // Validate OTP length
+            if (enteredOTP.length !== 6) {
+                showOtpError('Please enter the complete 6-digit OTP');
+                return;
+            }
+
+            // Check if OTP expired
+            if (Date.now() > expiryTime) {
+                showOtpError('OTP has expired. Please request a new one.');
+                document.getElementById('otpSection').classList.remove('active');
+                clearOtpInputs();
+                return;
+            }
+
+            // Check email match
+            if (currentEmail !== storedEmail) {
+                showOtpError('Email does not match. Please request a new OTP.');
+                return;
+            }
+
+            // Verify OTP
+            if (enteredOTP === storedOTP) {
+                // Show loading state
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.textContent = 'Verifying...';
+
+                setTimeout(() => {
+                    // Store authentication
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('userEmail', currentEmail);
+
+                    // Clear OTP data
+                    localStorage.removeItem('adminOTP');
+                    localStorage.removeItem('adminOTPEmail');
+                    localStorage.removeItem('adminOTPExpiry');
+
+                    // Show dashboard
+                    showDashboard();
+                }, 500);
+            } else {
+                showOtpError('Invalid OTP. Please try again.');
+                clearOtpInputs();
+            }
+        });
+
+        // Helper functions for OTP
+        function getEnteredOTP() {
+            return document.getElementById('otp1').value +
+                document.getElementById('otp2').value +
+                document.getElementById('otp3').value +
+                document.getElementById('otp4').value +
+                document.getElementById('otp5').value +
+                document.getElementById('otp6').value;
+        }
+
+        function clearOtpInputs() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`otp${i}`).value = '';
+            }
+        }
+
+        function moveToNext(current, nextId) {
+            if (current.value.length === 1 && nextId) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        function handleOtpKeyup(event, currentId, prevId) {
+            if (event.key === 'Backspace' && !event.target.value && prevId) {
+                document.getElementById(prevId).focus();
+            }
+        }
+
+        function showOtpError(message) {
+            otpErrorMessage.textContent = message;
+            otpErrorMessage.classList.add('show');
+        }
+
+        function showDashboard() {
+            loginPage.style.display = 'none';
+            dashboardPage.classList.add('active');
+            seedMockData(); // Ensure mock data exists
+            loadAdminDashboardStats();
+            loadUserInsights();
+            // Auto-refresh every 30 seconds
+            if (window.dashboardRefreshInterval) {
+                clearInterval(window.dashboardRefreshInterval);
+            }
+            window.dashboardRefreshInterval = setInterval(() => {
+                loadAdminDashboardStats();
+                loadUserInsights();
+            }, 30000);
+        }
+
+        function seedMockData() {
+            const existingData = localStorage.getItem('allUsersData');
+            if (existingData && JSON.parse(existingData).length > 0) return;
+
+            console.log("Seeding mock data for analytics...");
+            const numberOfUsers = 50;
+
+            const ages = ['13-17', '18-22', '23-27', '28-32', '33+'];
+            const genders = ['male', 'female', 'non-binary', 'prefer-not-to-say'];
+            const professions = ['student', 'working', 'both', 'other'];
+            const answerOptions = {
+                1: ['high', 'moderate', 'low', 'very_low'],
+                2: ['9+', '7-8', '5-6', 'less_5'],
+                3: ['rarely', 'sometimes', 'often', 'daily'],
+                4: ['very_active', 'active', 'moderate', 'inactive'],
+                5: ['none', 'mild', 'moderate', 'severe'],
+                6: ['excellent', 'good', 'fair', 'poor'],
+                7: ['never', 'rarely', 'sometimes', 'often'],
+                8: ['never', 'rarely', 'sometimes', 'often'],
+                9: ['excellent', 'good', 'fair', 'poor'],
+                10: ['none', 'minor', 'moderate', 'major']
+            };
+
+            const allUsersData = [];
+            const allUserLogins = [];
+            const demographicsTracking = [];
+            const funnelAnalytics = {
+                visited: numberOfUsers + 30,
+                attempted: numberOfUsers + 15,
+                completed: numberOfUsers
+            };
+            const questionAnalytics = {};
+
+            for (let i = 1; i <= numberOfUsers; i++) {
+                const email = `mockuser${i}@example.com`;
+                const timestamp = Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000);
+
+                const age = ages[Math.floor(Math.random() * ages.length)];
+                const gender = genders[Math.floor(Math.random() * genders.length)];
+                const profession = professions[Math.floor(Math.random() * professions.length)];
+
+                const answers = {};
+                const questionTimes = {};
+                for (let q = 1; q <= 10; q++) {
+                    const opts = answerOptions[q];
+                    let selectedIndex;
+                    if (q === 2 || q === 3) {
+                        selectedIndex = Math.min(opts.length - 1, Math.floor(Math.random() * 2) + 2);
+                    } else {
+                        selectedIndex = Math.floor(Math.random() * opts.length);
+                    }
+                    answers[q] = opts[selectedIndex];
+
+                    const timeSpent = Math.floor(Math.random() * 8000) + 2000;
+                    questionTimes[q] = timeSpent;
+
+                    if (!questionAnalytics[q]) questionAnalytics[q] = [];
+                    questionAnalytics[q].push(timeSpent);
+                }
+
+                allUsersData.push({
+                    email: email,
+                    timestamp: timestamp,
+                    lastUpdated: timestamp,
+                    data: {
+                        demographics: { age, profession, gender },
+                        questionnaire: {
+                            demographics: { age, profession, gender },
+                            answers: answers,
+                            questionTimes: questionTimes,
+                            completedAt: timestamp + 60000
+                        },
+                        completion: { completed: true, timestamp: timestamp + 60000 }
+                    }
+                });
+
+                allUserLogins.push({
+                    email: email,
+                    firstLogin: timestamp - 86400000,
+                    lastLogin: timestamp,
+                    loginCount: Math.floor(Math.random() * 5) + 1
+                });
+
+                demographicsTracking.push({
+                    email: email,
+                    age: age,
+                    gender: gender,
+                    profession: profession,
+                    timestamp: timestamp
+                });
+            }
+
+            localStorage.setItem('allUsersData', JSON.stringify(allUsersData));
+            localStorage.setItem('allUserLogins', JSON.stringify(allUserLogins));
+            localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+            localStorage.setItem('questionAnalytics', JSON.stringify(questionAnalytics));
+            localStorage.setItem('funnelAnalytics', JSON.stringify(funnelAnalytics));
+        }
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Hide previous errors
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+
+            // Basic validation
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+
+            // Show loading state
+            loginButton.disabled = true;
+            loginButton.textContent = 'Signing in...';
+
+            // Simulate API call
+            setTimeout(() => {
+                // For demo, accept any credentials
+                if (email && password) {
+                    // Store authentication
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('userEmail', email);
+
+                    // Show dashboard
+                    showDashboard();
+                } else {
+                    showError('Invalid credentials');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Sign in';
+                }
+            }, 500);
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('userEmail');
+            showLogin();
+            // Reset form
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Admin Dashboard - Load User Insights
+        function analyzeUserData(answers) {
+            const issues = [];
+
+            if (answers[1] === 'low' || answers[1] === 'very_low') issues.push('Low Energy Levels');
+            if (answers[2] === '5-6' || answers[2] === 'less_5') issues.push('Sleep Deprivation');
+            if (answers[3] === 'often' || answers[3] === 'daily') issues.push('High Stress/Anxiety');
+            if (answers[4] === 'moderate' || answers[4] === 'inactive') issues.push('Physical Inactivity');
+            if (answers[5] === 'moderate' || answers[5] === 'severe') issues.push('Physical Pain');
+            if (answers[6] === 'fair' || answers[6] === 'poor') issues.push('Poor Nutrition');
+            if (answers[7] === 'often' || answers[7] === 'sometimes') issues.push('Coping Difficulties');
+            if (answers[8] === 'often') issues.push('Concentration Issues');
+            if (answers[9] === 'fair' || answers[9] === 'poor') issues.push('Social Isolation');
+
+            return issues;
+        }
+
+        // Admin Dashboard - Load Real Statistics
+        function loadAdminDashboardStats() {
+            // Load all real user data
+            const allUsersData = JSON.parse(localStorage.getItem('allUsersData') || '[]');
+            const allUserLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
+
+            // Calculate real statistics
+            const totalParticipants = allUserLogins.length;
+            const completedAssessments = allUsersData.filter(u =>
+                u.data && u.data.completion && u.data.completion.completed
+            ).length;
+
+            // Calculate active programs (users who logged in within last 30 days)
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const activePrograms = allUserLogins.filter(login => {
+                const lastLogin = login.lastLogin || login.firstLogin;
+                return lastLogin >= thirtyDaysAgo;
+            }).length;
+
+            // Calculate health reports (completed assessments with data)
+            const healthReports = allUsersData.filter(u =>
+                u.data && u.data.questionnaire && u.data.completion && u.data.completion.completed
+            ).length;
+
+            // Calculate completion rate
+            const completionRate = totalParticipants > 0
+                ? Math.round((completedAssessments / totalParticipants) * 100)
+                : 0;
+
+            // Update main stat cards
+            const totalParticipantsEl = document.getElementById('adminTotalParticipants');
+            const activeProgramsEl = document.getElementById('adminActivePrograms');
+            const healthReportsEl = document.getElementById('adminHealthReports');
+            const completionRateEl = document.getElementById('adminCompletionRate');
+
+            if (totalParticipantsEl) totalParticipantsEl.textContent = totalParticipants.toLocaleString();
+            if (activeProgramsEl) activeProgramsEl.textContent = activePrograms;
+            if (healthReportsEl) healthReportsEl.textContent = healthReports;
+            if (completionRateEl) completionRateEl.textContent = completionRate + '%';
+        }
+
+        // Admin Dashboard - Load Real User Insights
+        function loadUserInsights() {
+            // Load all real user data
+            const allUsersData = JSON.parse(localStorage.getItem('allUsersData') || '[]');
+            const allUserLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
+
+            // Calculate real statistics
+            const totalUsers = allUserLogins.length;
+            const completedAssessments = allUsersData.filter(u =>
+                u.data && u.data.completion && u.data.completion.completed
+            ).length;
+
+            // Calculate users needing support (those with identified issues)
+            let usersNeedingSupport = 0;
+            const allIssues = [];
+
+            allUsersData.forEach(user => {
+                if (user.data && user.data.questionnaire) {
+                    const issues = analyzeUserData(user.data.questionnaire.answers || {});
+                    if (issues.length > 0) {
+                        usersNeedingSupport++;
+                        allIssues.push(...issues);
+                    }
+                }
+            });
+
+            // Calculate completion rate
+            const completionRate = totalUsers > 0
+                ? Math.round((completedAssessments / totalUsers) * 100)
+                : 0;
+
+            // Update real stats in dashboard
+            const totalUsersEl = document.getElementById('totalUsers');
+            const completedAssessmentsEl = document.getElementById('completedAssessments');
+            const usersNeedingSupportEl = document.getElementById('usersNeedingSupport');
+
+            if (totalUsersEl) totalUsersEl.textContent = totalUsers;
+            if (completedAssessmentsEl) completedAssessmentsEl.textContent = completedAssessments;
+            if (usersNeedingSupportEl) usersNeedingSupportEl.textContent = usersNeedingSupport;
+
+            // Count common issues
+            const issueCounts = {};
+            allIssues.forEach(issue => {
+                issueCounts[issue] = (issueCounts[issue] || 0) + 1;
+            });
+
+            // Display common issues
+            const issuesList = document.getElementById('issuesList');
+            const sortedIssues = Object.entries(issueCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            if (sortedIssues.length > 0) {
+                issuesList.innerHTML = sortedIssues.map(([issue, count]) => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #fef2f2; border-radius: 8px; margin-bottom: 8px;">
+                        <div>
+                            <span style="color: #dc2626; margin-right: 8px;">⚠️</span>
+                            <span style="color: #374151;">${issue}</span>
+                        </div>
+                        <span style="color: #dc2626; font-weight: 600;">${count} ${count === 1 ? 'user' : 'users'}</span>
+                    </div>
+                `).join('');
+            } else {
+                issuesList.innerHTML = '<p style="color: #6b7280;">No user data available yet. Users need to complete the health assessment.</p>';
+            }
+        }
+
+        function analyzeUserData(answers) {
+            const issues = [];
+
+            if (answers[1] === 'low' || answers[1] === 'very_low') issues.push('Low Energy Levels');
+            if (answers[2] === '5-6' || answers[2] === 'less_5') issues.push('Sleep Deprivation');
+            if (answers[3] === 'often' || answers[3] === 'daily') issues.push('High Stress/Anxiety');
+            if (answers[4] === 'moderate' || answers[4] === 'inactive') issues.push('Physical Inactivity');
+            if (answers[5] === 'moderate' || answers[5] === 'severe') issues.push('Physical Pain');
+            if (answers[6] === 'fair' || answers[6] === 'poor') issues.push('Poor Nutrition');
+            if (answers[7] === 'often' || answers[7] === 'sometimes') issues.push('Coping Difficulties');
+            if (answers[8] === 'often') issues.push('Concentration Issues');
+            if (answers[9] === 'fair' || answers[9] === 'poor') issues.push('Social Isolation');
+
+            return issues;
+        }
+
+        // Auto-focus first OTP input when section becomes visible
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.target.classList.contains('active')) {
+                    setTimeout(() => {
+                        const otp1 = document.getElementById('otp1');
+                        if (otp1) otp1.focus();
+                    }, 100);
+                }
+            });
+        });
+
+        const otpSection = document.getElementById('otpSection');
+        if (otpSection) {
+            observer.observe(otpSection, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+
+        // Initialize
+        checkAuth();
+
+        // Load user insights if on dashboard
+        setTimeout(() => {
+            if (dashboardPage.classList.contains('active')) {
+                loadUserInsights();
+            }
+        }, 100);
+    </script>
+</body>
+
+</html>

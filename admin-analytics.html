@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Analytics Dashboard - Youth Health</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+            padding: 20px 0;
+            margin-bottom: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: bold;
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-button {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #0ea5e9;
+            border-bottom-color: #0ea5e9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            color: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.5);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .funnel-label {
+            min-width: 150px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .funnel-bar {
+            flex: 1;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            position: relative;
+            margin: 0 16px;
+        }
+
+        .funnel-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #0284c7);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .funnel-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .issue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .issue-name {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .issue-count {
+            font-weight: 600;
+            color: #ef4444;
+        }
+
+        .awareness-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-width: 500px;
+            display: none;
+        }
+
+        .awareness-popup.active {
+            display: block;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .popup-overlay.active {
+            display: block;
+        }
+
+        .popup-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .popup-content {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .popup-close {
+            background: #0ea5e9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Check authentication -->
+    <script>
+        if (localStorage.getItem('isAuthenticated') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <div class="header">
+        <div class="header-content">
+            <h1 class="header-title">Admin Analytics Dashboard</h1>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="resetDashboardData()"
+                    style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500;">Reset
+                    Data</button>
+                <button class="logout-button" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">Overview</button>
+            <button class="tab" onclick="switchTab('issues')">Top 5 Issues</button>
+            <button class="tab" onclick="switchTab('behavior')">User Behavior</button>
+            <button class="tab" onclick="switchTab('funnel')">Funnel Analytics</button>
+            <button class="tab" onclick="switchTab('segmentation')">Segmentation</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overviewTab" class="tab-content active">
+            <div class="grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="stat-value" id="completedAssessments">0</div>
+                    <div class="stat-label">Completed Assessments</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="stat-value" id="avgCompletionTime">0</div>
+                    <div class="stat-label">Avg Completion Time (min)</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Top 5 Rising Youth Health Issues</h2>
+                <div class="chart-container">
+                    <canvas id="topIssuesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 5 Issues Tab -->
+        <div id="issuesTab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Top 5 Common Rising Youth Issues</h2>
+                <div id="topIssuesList"></div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Issue Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="issuesPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Behavior Tab -->
+        <div id="behaviorTab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Time Spent per Question</h2>
+                <div class="chart-container">
+                    <canvas id="questionTimeChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Question Difficulty Analysis</h2>
+                <div id="questionDifficultyList"></div>
+            </div>
+        </div>
+
+        <!-- Funnel Analytics Tab -->
+        <div id="funnelTab" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <h2 class="card-title" style="margin: 0;">User Journey Funnel</h2>
+                        <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">Tracks: Page Visits → Started
+                            Questionnaire → Completed Assessment</p>
+                    </div>
+                    <div>
+                        <button onclick="refreshFunnelData()"
+                            style="background: #0ea5e9; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Refresh
+                            Data</button>
+                    </div>
+                </div>
+                <div id="funnelContainer"></div>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Funnel Visualization</h2>
+                <div class="chart-container">
+                    <canvas id="funnelChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Segmentation Tab -->
+        <div id="segmentationTab" class="tab-content">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label class="filter-label">Filter by:</label>
+                    <select id="ageFilter" onchange="updateSegmentation()">
+                        <option value="all">All Ages</option>
+                        <option value="13-17">13-17 years</option>
+                        <option value="18-22">18-22 years</option>
+                        <option value="23-27">23-27 years</option>
+                        <option value="28-32">28-32 years</option>
+                        <option value="33+">33+ years</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="professionFilter" onchange="updateSegmentation()">
+                        <option value="all">All Professions</option>
+                        <option value="student">Student</option>
+                        <option value="working">Working Professional</option>
+                        <option value="both">Both</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Health Issues by Age Group</h2>
+                <div class="chart-container">
+                    <canvas id="ageGroupChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Health Issues by Profession</h2>
+                <div class="chart-container">
+                    <canvas id="professionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Segmentation Details</h2>
+                <div id="segmentationDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Awareness Popup -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closeAwarenessPopup()"></div>
+    <div class="awareness-popup" id="awarenessPopup">
+        <h2 class="popup-title">Health Awareness Alert</h2>
+        <div class="popup-content" id="popupContent"></div>
+        <button class="popup-close" onclick="closeAwarenessPopup()">Got it</button>
+    </div>
+
+    <script src="admin-analytics.js"></script>
+</body>
+
+</html>

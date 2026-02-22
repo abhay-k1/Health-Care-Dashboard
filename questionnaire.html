@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Questionnaire - Youth Health Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: bold;
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .logout-button {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-button:hover {
+            background: #dc2626;
+        }
+
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #0ea5e9;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #374151;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid rgba(229, 231, 235, 0.8);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option:hover {
+            border-color: rgba(14, 165, 233, 0.5);
+            background: rgba(240, 249, 255, 0.8);
+            transform: translateX(4px);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .option.selected {
+            border-color: #0ea5e9;
+            background: rgba(224, 242, 254, 0.9);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .progress-bar {
+            background: rgba(229, 231, 235, 0.6);
+            backdrop-filter: blur(4px);
+            height: 10px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #0ea5e9, #3b82f6, #0ea5e9);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+            height: 100%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: rgba(239, 246, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(191, 219, 254, 0.5);
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .info-box p {
+            color: #1e40af;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Check authentication -->
+    <script>
+        if (localStorage.getItem('userAuthenticated') !== 'true') {
+            window.location.href = 'user-login.html';
+        }
+    </script>
+
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">Health Assessment Questionnaire</h1>
+                <p class="header-subtitle">Help us understand your health needs</p>
+            </div>
+            <button class="logout-button" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Demographics Section -->
+        <div id="demographicsSection" class="question-card" style="max-width: 600px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <h2 class="question-title" style="color: #0ea5e9; margin-bottom: 8px;">Welcome to Health Assessment</h2>
+                <p class="question-text" style="color: #6b7280;">Please provide some basic information to help us
+                    personalize your experience and improve our analytics.</p>
+            </div>
+
+            <div class="glass" style="border-radius: 16px; padding: 28px; margin-bottom: 24px;">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="userAge"
+                        style="display: block; font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 10px;">
+                        <span style="color: #0ea5e9;">📅</span> Select Your Age Group
+                    </label>
+                    <select id="userAge" class="form-select" required style="font-size: 16px; padding: 14px 16px;">
+                        <option value="">-- Please select your age --</option>
+                        <option value="13-17">13-17 years</option>
+                        <option value="18-22">18-22 years</option>
+                        <option value="23-27">23-27 years</option>
+                        <option value="28-32">28-32 years</option>
+                        <option value="33+">33+ years</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="userProfession"
+                        style="display: block; font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 10px;">
+                        <span style="color: #0ea5e9;">💼</span> What is your current status?
+                    </label>
+                    <select id="userProfession" class="form-select" required
+                        style="font-size: 16px; padding: 14px 16px;">
+                        <option value="">-- Please select an option --</option>
+                        <option value="student">🎓 Student</option>
+                        <option value="working">💼 Working Professional</option>
+                        <option value="both">🎓💼 Both (Student & Working)</option>
+                        <option value="other">📋 Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="startQuestionnaire()"
+                    style="padding: 14px 32px; font-size: 16px; min-width: 200px;">
+                    Continue to Questions →
+                </button>
+                <p style="font-size: 12px; color: #6b7280; margin-top: 12px;">
+                    This information helps us provide better insights and personalized recommendations
+                </p>
+            </div>
+        </div>
+
+        <div id="questionnaireSection" style="display: none;">
+            <div class="info-box">
+                <p><strong>Welcome!</strong> This questionnaire will help us identify any health concerns and provide
+                    personalized recommendations. Your answers are confidential and will be used to suggest appropriate
+                    exercises and professional consultants.</p>
+            </div>
+
+            <div class="progress-text">
+                Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+            </div>
+
+            <div id="questionContainer">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <div id="buttonGroupContainer" class="button-group" style="justify-content: flex-end; display: none;">
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+
+        function generateQuestions(age, profession) {
+            // Determine if the user is a student, professional, or both
+            const isStudent = profession === 'student' || profession === 'both';
+            const isProfessional = profession === 'working' || profession === 'both';
+
+            // Base context words
+            const workContext = isStudent ? "classes/studies" : (isProfessional ? "workday/professional tasks" : "daily activities");
+            const prepContext = isStudent ? "exam/study" : (isProfessional ? "professional/financial" : "daily life");
+            const focusContext = isStudent ? "lectures or studying" : "work tasks or meetings";
+            const painContext = isStudent ? "from carrying a backpack or sitting in class" : "from your desk job or daily commute";
+
+            return [
+                {
+                    id: 1,
+                    question: `How would you rate your energy levels for your ${workContext}?`,
+                    options: [
+                        { value: "high", text: "Very high - I feel energetic most of the time" },
+                        { value: "moderate", text: "Moderate - I have energy but get tired sometimes" },
+                        { value: "low", text: "Low - I often feel tired or fatigued" },
+                        { value: "very_low", text: "Very low - I feel exhausted most of the time" }
+                    ]
+                },
+                {
+                    id: 2,
+                    question: "How many hours of sleep do you get per night on average?",
+                    options: [
+                        { value: "9+", text: "9+ hours" },
+                        { value: "7-8", text: "7-8 hours" },
+                        { value: "5-6", text: "5-6 hours" },
+                        { value: "less_5", text: "Less than 5 hours" }
+                    ]
+                },
+                {
+                    id: 3,
+                    question: `How often do you experience stress or anxiety regarding your ${prepContext} responsibilities?`,
+                    options: [
+                        { value: "rarely", text: "Rarely or never" },
+                        { value: "sometimes", text: "Sometimes (1-2 times per week)" },
+                        { value: "often", text: "Often (3-4 times per week)" },
+                        { value: "daily", text: "Daily or almost daily" }
+                    ]
+                },
+                {
+                    id: 4,
+                    question: "How would you describe your physical activity level?",
+                    options: [
+                        { value: "very_active", text: "Very active - Exercise 5+ times per week" },
+                        { value: "active", text: "Active - Exercise 3-4 times per week" },
+                        { value: "moderate", text: "Moderate - Exercise 1-2 times per week" },
+                        { value: "inactive", text: "Inactive - Rarely or never exercise" }
+                    ]
+                },
+                {
+                    id: 5,
+                    question: `Do you experience any physical pain or discomfort (e.g., ${painContext})?`,
+                    options: [
+                        { value: "none", text: "No pain or discomfort" },
+                        { value: "mild", text: "Mild pain occasionally" },
+                        { value: "moderate", text: "Moderate pain regularly" },
+                        { value: "severe", text: "Severe pain that affects daily activities" }
+                    ]
+                },
+                {
+                    id: 6,
+                    question: "How would you rate your eating habits during busy days?",
+                    options: [
+                        { value: "excellent", text: "Excellent - Balanced meals, regular schedule" },
+                        { value: "good", text: "Good - Mostly healthy with occasional indulgences" },
+                        { value: "fair", text: "Fair - Inconsistent eating habits" },
+                        { value: "poor", text: "Poor - Irregular meals, mostly unhealthy food" }
+                    ]
+                },
+                {
+                    id: 7,
+                    question: `How often do you feel overwhelmed by your ${prepContext} expectations?`,
+                    options: [
+                        { value: "never", text: "Never" },
+                        { value: "rarely", text: "Rarely" },
+                        { value: "sometimes", text: "Sometimes" },
+                        { value: "often", text: "Often or always" }
+                    ]
+                },
+                {
+                    id: 8,
+                    question: `Do you have difficulty concentrating on ${focusContext}?`,
+                    options: [
+                        { value: "never", text: "Never - I can focus well" },
+                        { value: "rarely", text: "Rarely" },
+                        { value: "sometimes", text: "Sometimes" },
+                        { value: "often", text: "Often - It's a significant problem" }
+                    ]
+                },
+                {
+                    id: 9,
+                    question: isStudent ? "How would you describe your social connections with your peers and classmates?" : "How would you describe your social connections with colleagues and your personal network?",
+                    options: [
+                        { value: "excellent", text: "Excellent - Strong support network" },
+                        { value: "good", text: "Good - Regular social interactions" },
+                        { value: "fair", text: "Fair - Limited social connections" },
+                        { value: "poor", text: "Poor - Isolated or minimal connections" }
+                    ]
+                },
+                {
+                    id: 10,
+                    question: isStudent ? "Have you experienced any significant life changes recently (e.g., new semester, graduating)?" : "Have you experienced any significant life changes recently (e.g., job transitions, moving)?",
+                    options: [
+                        { value: "none", text: "No significant changes" },
+                        { value: "minor", text: "Minor changes" },
+                        { value: "moderate", text: "Moderate changes" },
+                        { value: "major", text: "Major life changes" }
+                    ]
+                }
+            ];
+        }
+
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let questionStartTimes = {};
+        let questionTimes = {};
+        let demographics = {};
+
+        function initQuestionnaire() {
+            // Check if demographics already collected
+            const savedDemographics = localStorage.getItem('userDemographics');
+            if (savedDemographics) {
+                demographics = JSON.parse(savedDemographics);
+                document.getElementById('demographicsSection').style.display = 'none';
+                document.getElementById('questionnaireSection').style.display = 'block';
+                document.getElementById('buttonGroupContainer').style.display = 'flex';
+
+                // Generate dynamic questions based on loaded demographics
+                questions = generateQuestions(demographics.age, demographics.profession);
+
+                // Don't track "attempted" here - it will be tracked when first question is shown
+                startQuestions();
+            } else {
+                document.getElementById('demographicsSection').style.display = 'block';
+                document.getElementById('questionnaireSection').style.display = 'none';
+                document.getElementById('buttonGroupContainer').style.display = 'none';
+            }
+        }
+
+        function startQuestionnaire() {
+            const age = document.getElementById('userAge').value;
+            const profession = document.getElementById('userProfession').value;
+
+            if (!age || !profession) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            demographics = { age, profession };
+            localStorage.setItem('userDemographics', JSON.stringify(demographics));
+
+            // Save to analytics immediately
+            saveUserData('demographics', demographics);
+
+            // Also save to a separate demographics tracking for analytics
+            const demographicsTracking = JSON.parse(localStorage.getItem('demographicsTracking') || '[]');
+            const userEmail = localStorage.getItem('userEmail') || 'anonymous';
+            const existingIndex = demographicsTracking.findIndex(d => d.email === userEmail);
+            const demoData = {
+                email: userEmail,
+                age: age,
+                profession: profession,
+                timestamp: Date.now()
+            };
+            if (existingIndex >= 0) {
+                demographicsTracking[existingIndex] = demoData;
+            } else {
+                demographicsTracking.push(demoData);
+            }
+            localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+
+            document.getElementById('demographicsSection').style.display = 'none';
+            document.getElementById('questionnaireSection').style.display = 'block';
+            document.getElementById('buttonGroupContainer').style.display = 'flex';
+
+            // Generate customized questions
+            questions = generateQuestions(age, profession);
+
+            startQuestions();
+        }
+
+        function startQuestions() {
+            // Load saved answers
+            const savedAnswers = localStorage.getItem('questionnaireAnswers');
+            if (savedAnswers) {
+                answers = JSON.parse(savedAnswers);
+            }
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            // Track time spent on previous question
+            if (currentQuestionIndex >= 0 && questionStartTimes[currentQuestionIndex] !== undefined) {
+                const timeSpent = Date.now() - questionStartTimes[currentQuestionIndex];
+                questionTimes[questions[currentQuestionIndex].id] = timeSpent;
+                saveQuestionTime(questions[currentQuestionIndex].id, timeSpent);
+            }
+
+            currentQuestionIndex = index;
+            const question = questions[index];
+            // Record start time for this question
+            questionStartTimes[index] = Date.now();
+
+            // Track "attempted" when user views the first question for the first time
+            if (index === 0) {
+                trackFunnelStep('attempted');
+            }
+
+            document.getElementById('currentQuestion').textContent = index + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('progressFill').style.width = ((index + 1) / questions.length * 100) + '%';
+
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">Question ${index + 1}</div>
+                    <h2 class="question-title">${question.question}</h2>
+                    <div class="options" id="optionsContainer">
+                        ${question.options.map((option, optIndex) => `
+                            <div class="option ${answers[question.id] === option.value ? 'selected' : ''}" onclick="selectOption(${question.id}, '${option.value}')">
+                                <input type="radio" name="q${question.id}" value="${option.value}" id="q${question.id}_${optIndex}" ${answers[question.id] === option.value ? 'checked' : ''}>
+                                <label for="q${question.id}_${optIndex}">${option.text}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Update button
+            document.getElementById('nextBtn').textContent = index === questions.length - 1 ? 'Submit' : 'Next';
+            document.getElementById('nextBtn').onclick = index === questions.length - 1 ? submitQuestionnaire : nextQuestion;
+        }
+
+        function saveQuestionTime(questionId, timeSpent) {
+            const analytics = JSON.parse(localStorage.getItem('questionAnalytics') || '{}');
+            if (!analytics[questionId]) {
+                analytics[questionId] = [];
+            }
+            analytics[questionId].push(timeSpent);
+            localStorage.setItem('questionAnalytics', JSON.stringify(analytics));
+        }
+
+        function saveUserData(type, data) {
+            const allUsers = JSON.parse(localStorage.getItem('allUsersData') || '[]');
+            const userEmail = localStorage.getItem('userEmail') || 'anonymous';
+            const timestamp = Date.now();
+
+            let userData = allUsers.find(u => u.email === userEmail);
+            if (!userData) {
+                userData = { email: userEmail, timestamp, data: {} };
+                allUsers.push(userData);
+            }
+
+            userData.data[type] = data;
+            userData.lastUpdated = timestamp;
+
+            localStorage.setItem('allUsersData', JSON.stringify(allUsers));
+        }
+
+        function selectOption(questionId, value) {
+            answers[questionId] = value;
+            localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
+
+            // Update visual selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                const radio = opt.querySelector('input[type="radio"]');
+                if (radio.name === `q${questionId}`) {
+                    opt.classList.remove('selected');
+                    if (radio.value === value) {
+                        opt.classList.add('selected');
+                    }
+                }
+            });
+        }
+
+        function getNextQuestionIndex(currentIndex) {
+            // Adaptive questionnaire logic - skip questions based on answers
+            if (currentIndex >= questions.length - 1) {
+                return -1; // No more questions
+            }
+
+            let nextIndex = currentIndex + 1;
+
+            // If energy levels are high, skip detailed sleep questions unless stress is high
+            if (currentIndex === 0 && (answers[1] === 'high' || answers[1] === 'moderate')) {
+                // Still show sleep question, but if sleep is good, skip some follow-ups
+                // This is handled in the showQuestion function
+            }
+
+            // If stress is rarely or sometimes, we might want to ask a follow-up
+            // For now, we'll keep all questions but adjust based on context
+
+            // Skip pain questions if user is very active and reports no issues
+            if (currentIndex === 3 && answers[4] === 'very_active' && (answers[1] === 'high' || answers[1] === 'moderate')) {
+                // Keep the question but it's less critical
+            }
+
+            return nextIndex;
+        }
+
+        function nextQuestion() {
+            if (answers[questions[currentQuestionIndex].id]) {
+                const nextIndex = getNextQuestionIndex(currentQuestionIndex);
+
+                if (nextIndex >= 0 && nextIndex < questions.length) {
+                    showQuestion(nextIndex);
+                } else if (nextIndex === -1) {
+                    // All questions completed, submit
+                    submitQuestionnaire();
+                }
+            } else {
+                alert('Please select an answer before proceeding.');
+            }
+        }
+
+
+        function submitQuestionnaire() {
+            if (!answers[questions[currentQuestionIndex].id]) {
+                alert('Please select an answer before submitting.');
+                return;
+            }
+
+            // Track final question time
+            if (questionStartTimes[currentQuestionIndex] !== undefined) {
+                const timeSpent = Date.now() - questionStartTimes[currentQuestionIndex];
+                questionTimes[questions[currentQuestionIndex].id] = timeSpent;
+                saveQuestionTime(questions[currentQuestionIndex].id, timeSpent);
+            }
+
+            // Ensure demographics are included
+            if (!demographics || !demographics.age || !demographics.profession) {
+                const savedDemographics = localStorage.getItem('userDemographics');
+                if (savedDemographics) {
+                    demographics = JSON.parse(savedDemographics);
+                }
+            }
+
+            // Save answers with demographics
+            const completeData = {
+                answers,
+                demographics: demographics || {},
+                questionTimes,
+                completedAt: Date.now()
+            };
+
+            localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
+            localStorage.setItem('questionnaireCompleted', 'true');
+            localStorage.setItem('questionnaireCompleteData', JSON.stringify(completeData));
+
+            // Save to analytics
+            saveUserData('questionnaire', completeData);
+            saveUserData('completion', { completed: true, timestamp: Date.now() });
+
+            // Track completion
+            trackFunnelStep('completed');
+
+            // Redirect to results
+            window.location.href = 'results.html';
+        }
+
+        function trackFunnelStep(step) {
+            const funnel = JSON.parse(localStorage.getItem('funnelAnalytics') || '{}');
+            const userEmail = localStorage.getItem('userEmail') || 'anonymous';
+            const userFunnelKey = `user_${userEmail}_${step}`;
+
+            // For all funnel steps, track per user to avoid duplicates on page refresh
+            const userFunnel = JSON.parse(localStorage.getItem('userFunnelTracking') || '{}');
+            if (userFunnel[userFunnelKey]) {
+                // Already tracked for this user in this session, don't increment again
+                return;
+            }
+            // Mark as tracked for this user
+            userFunnel[userFunnelKey] = Date.now();
+            localStorage.setItem('userFunnelTracking', JSON.stringify(userFunnel));
+
+            // Initialize step count if it doesn't exist
+            if (!funnel[step]) {
+                funnel[step] = 0;
+            }
+
+            // Increment the count
+            funnel[step]++;
+            localStorage.setItem('funnelAnalytics', JSON.stringify(funnel));
+
+            // Debug log (can be removed in production)
+            console.log(`Funnel step "${step}" tracked. Current count: ${funnel[step]}`);
+        }
+
+        // Track page visit
+        window.addEventListener('load', function () {
+            trackFunnelStep('visited');
+        });
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout? Your progress will be saved.')) {
+                localStorage.removeItem('userAuthenticated');
+                window.location.href = 'user-login.html';
+            }
+        }
+
+        // Initialize
+        initQuestionnaire();
+    </script>
+</body>
+
+</html>

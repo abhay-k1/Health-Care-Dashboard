@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Health Recommendations - Youth Health Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: bold;
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-button {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-button:hover {
+            background: #dc2626;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.4);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
+
+        .summary-card h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .summary-card p {
+            font-size: 16px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .issues-card {
+            background: rgba(254, 242, 242, 0.8);
+            backdrop-filter: blur(12px);
+            border-left: 4px solid #ef4444;
+            border-right: 1px solid rgba(254, 226, 226, 0.5);
+            border-top: 1px solid rgba(254, 226, 226, 0.5);
+            border-bottom: 1px solid rgba(254, 226, 226, 0.5);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.1);
+        }
+
+        .issues-card h3 {
+            color: #991b1b;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .issue-list {
+            list-style: none;
+        }
+
+        .issue-list li {
+            color: #7f1d1d;
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .issue-list li:before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            font-size: 28px;
+        }
+
+        .exercise-item,
+        .consultant-item {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid #0ea5e9;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .exercise-item:hover,
+        .consultant-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .exercise-item h4,
+        .consultant-item h4 {
+            color: #111827;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .exercise-item p,
+        .consultant-item p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .consultant-item .contact {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .consultant-item .contact strong {
+            color: #374151;
+        }
+
+        .consultant-item .contact a {
+            color: #0ea5e9;
+            text-decoration: none;
+        }
+
+        .consultant-item .contact a:hover {
+            text-decoration: underline;
+        }
+
+        .consultant-item {
+            text-align: center;
+        }
+
+        .consultant-item h4 {
+            text-align: center;
+        }
+
+        .consultant-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 16px;
+            border: 4px solid #0ea5e9;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .instant-exercise {
+            background: linear-gradient(135deg, rgba(240, 253, 244, 0.8) 0%, rgba(220, 252, 231, 0.8) 100%);
+            backdrop-filter: blur(8px);
+            border-left: 4px solid #22c55e;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+        }
+
+        .instant-exercise h4 {
+            color: #166534;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instant-exercise .exercise-steps {
+            color: #15803d;
+            line-height: 1.8;
+            margin-top: 12px;
+        }
+
+        .instant-exercise .exercise-steps ol {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .severity-indicator {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        .severity-mild {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .severity-moderate {
+            background: #fde68a;
+            color: #78350f;
+        }
+
+        .severity-severe {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            margin-left: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Check authentication -->
+    <script>
+        if (localStorage.getItem('userAuthenticated') !== 'true' || localStorage.getItem('questionnaireCompleted') !== 'true') {
+            window.location.href = 'user-login.html';
+        }
+    </script>
+
+    <div class="header">
+        <div class="header-content">
+            <h1 class="header-title">Your Personalized Health Recommendations</h1>
+            <button class="logout-button" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="summary-card">
+            <h2>Assessment Complete! 🎉</h2>
+            <p>Based on your responses, we've identified some areas that may need attention and created personalized
+                recommendations to help improve your health and wellbeing.</p>
+            <button class="btn btn-secondary" id="aiInsightsBtn" onclick="playResultsAudio()"
+                style="margin-top: 16px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"></path>
+                    <path fill-rule="evenodd"
+                        d="M6 8a1 1 0 00-2 0v2a6.002 6.002 0 005 5.917V19h-1a1 1 0 100 2h4a1 1 0 100-2h-1v-3.083A6.002 6.002 0 0016 10V8a1 1 0 10-2 0v2a4 4 0 01-8 0V8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                Listen to AI Insights
+            </button>
+        </div>
+
+        <div id="issuesSection"></div>
+        <div id="exercisesSection"></div>
+        <div id="consultantsSection"></div>
+
+        <div class="section" id="aiChatSection" style="margin-top: 24px;">
+            <h2 class="section-title">
+                <span class="icon">💬</span>
+                Ask AI Assistant
+            </h2>
+            <p style="color: #6b7280; margin-bottom: 16px;">Have questions about your health report? Type your problem
+                below and our AI will provide personalized advice.</p>
+            <div id="chatHistory"
+                style="max-height: 300px; overflow-y: auto; margin-bottom: 16px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: rgba(255,255,255,0.5); display: none;">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <input type="text" id="aiChatInput" placeholder="E.g., I'm having trouble sleeping, what should I do?"
+                    style="flex: 1; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px;">
+                <button class="btn btn-primary" id="aiChatSubmit" onclick="sendChatMessage()">Ask</button>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="questionnaire.html" class="btn btn-secondary">Retake Assessment</a>
+            <button class="btn btn-primary" onclick="window.print()">Print Recommendations</button>
+        </div>
+    </div>
+
+    <script>
+        const SARVAM_API_KEY = "sk_ln1ow9q0_VyTVyU7GDcGnPVczSPWRJ1Yr";
+
+        // Calculate severity score
+        function calculateSeverity(answers) {
+            let severityScore = 0;
+            const severityMap = {
+                // Energy levels (1)
+                1: { 'high': 0, 'moderate': 1, 'low': 2, 'very_low': 3 },
+                // Sleep (2)
+                2: { '9+': 0, '7-8': 1, '5-6': 2, 'less_5': 3 },
+                // Stress (3)
+                3: { 'rarely': 0, 'sometimes': 1, 'often': 2, 'daily': 3 },
+                // Physical activity (4)
+                4: { 'very_active': 0, 'active': 1, 'moderate': 2, 'inactive': 3 },
+                // Pain (5)
+                5: { 'none': 0, 'mild': 1, 'moderate': 2, 'severe': 3 },
+                // Eating habits (6)
+                6: { 'excellent': 0, 'good': 1, 'fair': 2, 'poor': 3 },
+                // Coping (7)
+                7: { 'never': 0, 'rarely': 1, 'sometimes': 2, 'often': 3 },
+                // Concentration (8)
+                8: { 'never': 0, 'rarely': 1, 'sometimes': 2, 'often': 3 },
+                // Social connections (9)
+                9: { 'excellent': 0, 'good': 1, 'fair': 2, 'poor': 3 }
+            };
+
+            Object.keys(answers).forEach(qId => {
+                const qNum = parseInt(qId);
+                if (severityMap[qNum] && severityMap[qNum][answers[qId]] !== undefined) {
+                    severityScore += severityMap[qNum][answers[qId]];
+                }
+            });
+
+            // Max possible score is around 27 (9 questions * 3 max points)
+            // Mild: 0-9, Moderate: 10-18, Severe: 19+
+            if (severityScore <= 9) return 'mild';
+            if (severityScore <= 18) return 'moderate';
+            return 'severe';
+        }
+
+        const neuroConsultants = [
+            { name: "Dr. Rajeev Singh", location: "Patna", clinic: "Sai Healthcare Wellness Center", contact: "+91 7050112111", description: "Founder, Official Consultant Bihar Regiment Center, AIIMS Trained." },
+            { name: "Dr. Naresh Kumar", location: "Delhi/Pitampura", clinic: "APARC Centre for Neuro-Rehabilitation", contact: "+91 9990970104", description: "Senior Neuro-Physiotherapist" },
+            { name: "Dr. Niraj Jha", location: "Mumbai/Chembur", clinic: "Physioworld", contact: "+91 9320539142", description: "Senior Neuro-Physiotherapist" },
+            { name: "Dr. Priya Pawar", location: "Mumbai/Parel", clinic: "Dr. Priya’s Walk Again Neuro Rehab & Physiotherapy Centre", contact: "+91 8080030046", description: "Neuro Rehab Specialist" },
+            { name: "Dr. Ankur", location: "Delhi/GK-1", clinic: "Xcell Physiocare", contact: "+91 9999824495", description: "Specialist in Neuro & Pulmonary Rehab" },
+            { name: "Dr. Moncy Varghese", location: "Delhi/Sarai Rohilla", clinic: "Ortho & Neuro, Spine Physiotherapy & Rehab", contact: "+91 9582297372", description: "Spine & Neuro Rehab" },
+            { name: "Dr. Satyajit Sabat", location: "Bangalore/HSR Layout", clinic: "HOPE BRAIN & SPINE Physiotherapy Clinic", contact: "+91 8197170789", description: "Brain & Spine Specialist" },
+            { name: "Dr. Pooja Mehta", location: "Mumbai/Malad", clinic: "PhysioHub Advance Sports Rehab & Neuro", contact: "+91 9987973866", description: "Sports & Neuro Rehab" },
+            { name: "Dr. Nivrith Chambra", location: "Bangalore/CV Raman Nagar", clinic: "Advanced Physiotherapy & Rehabilitation Clinic", contact: "+91 9886592536", description: "Neuro Rehab" },
+            { name: "Dr. Palanivel Rajan", location: "Bangalore/RT Nagar", clinic: "Physio365", contact: "+91 9886658365", description: "Neuro Physiotherapist" },
+            { name: "Dr. Upendra Ageawal", location: "Jaipur", clinic: "THE PHYSIOREHAB, Nirman Nagar", contact: "+91 9828600634", description: "Physiorehab Specialist" },
+            { name: "Dr. Khushboo Joshi", location: "Surat/Adajan", clinic: "Tanish Physio & Fitness Clinic", contact: "+91 9427555696", description: "Physio & Fitness" },
+            { name: "Dr. Sudipto Nag", location: "West Bengal/Hooghly", clinic: "Snnag Memorial Foundation", contact: "+91 9231895591", description: "Neuro Physiotherapy" },
+            { name: "Dr. Maneesh Rai Arora", location: "Dehradun", clinic: "Ur Stem Rehab clinic", contact: "+91 9412052921", description: "Stem Rehab" },
+            { name: "Dr. Vedika Gala", location: "Mumbai/Malad West", clinic: "Viveda- Advanced physiotherapy clinic", contact: "+91 8104851638", description: "Advanced Physiotherapist" },
+            { name: "Dr. Vidhi Dave", location: "Mumbai/Chowpatty", clinic: "The Rehab House", contact: "+91 9653699526", description: "Neuro & Ortho Rehab" },
+            { name: "Dr. Vinit Gada", location: "Mumbai/Chowpatty", clinic: "The Rehab House", contact: "+91 7208343583", description: "Senior Physiotherapist" },
+            { name: "Dr. Arjun Muchhadiya", location: "Rajkot", clinic: "Expert Neuro Physiotherapy", contact: "+91 9773187702", description: "Expert Neuro Physiotherapy" },
+            { name: "Dr. Santosh Kumar", location: "Delhi/Dwarka", clinic: "Neurology and Physiotherapy Clinic", contact: "+91 9953606662", description: "Neurology Specialist" },
+            { name: "Dr. Viral", location: "Ahmedabad", clinic: "Lakshya Neuro Rehab, Satellite", contact: "+91 9909475475", description: "Neuro Rehab" },
+            { name: "Dr. Katariya", location: "Nagpur", clinic: "PhysioPhy (Dhantoli)", contact: "+91 9970127614", description: "Physiotherapist" },
+            { name: "Dr. Deepanshu Khatri", location: "Delhi/Safdarjung", clinic: "CB Physiotherapy", contact: "+91 11 4306 0832", description: "Physiotherapist" },
+            { name: "Dr. Tarun Lala", location: "Delhi/Dwarka", clinic: "MaxAtHome Neurorehab", contact: "9240299624", description: "Neurorehab" },
+            { name: "Dr. Shuchita Bansal", location: "Delhi/Dwarka", clinic: "MaxAtHome", contact: "9240299624", description: "Physiotherapist" },
+            { name: "Dr. Dimple H Modi", location: "Mumbai/Dahisar", clinic: "Swasth Health Clinic", contact: "+91 22 (via Practo)", description: "Physiotherapist" },
+            { name: "Dr. Radhika Damani Biyani", location: "Mumbai/Peddar Rd", clinic: "Rehablance Physiotherapy Clinic", contact: "+91 22 (via Practo)", description: "Physiotherapist" },
+            { name: "Dr. Manasa Nair", location: "Mumbai/Worli", clinic: "Pheal", contact: "+91 22 (via Practo)", description: "Physiotherapist" },
+            { name: "Dr. Hetal J Shah", location: "Mumbai/North Mumbai", clinic: "Neurology Specialist", contact: "+91 22 (via Justdial)", description: "Specialist in Neuro Physiotherapy" },
+            { name: "Dr. Nikhil Ingole", location: "Panvel", clinic: "Ingole's Physiotherapy Clinic", contact: "+91 (via Justdial)", description: "Physiotherapist" },
+            { name: "Dr. Omprakash S Mahajan", location: "Ulwe", clinic: "Siddha Physiotherapy and Rehabilitation", contact: "+91 (via Justdial)", description: "Physiotherapy & Rehab" },
+            { name: "Dr. Jubin Thomas", location: "Nagpur/Wadi", clinic: "Neurophysiotherapist", contact: "+91 (via Justdial)", description: "Neurophysiotherapist" },
+            { name: "Dr. Mahimankanni Rocque", location: "Delhi/Dwarka", clinic: "Neuro Rehab Specialist", contact: "9240299624", description: "Neuro Rehab Specialist" },
+            { name: "Dr. Shaikh Saquib Parvez", location: "Delhi/Dwarka", clinic: "Physiotherapy & Rehabilitation", contact: "9240299624", description: "Physiotherapy & Rehab" },
+            { name: "Dr. Neha Gotmare", location: "Nagpur/Pratap Nagar", clinic: "Physiologic", contact: "+91 (via Practo)", description: "Physiotherapist" },
+            { name: "Dr. Nikita Khatri", location: "Nagpur/Wardha Rd", clinic: "YourPhysio", contact: "+91 (via Practo)", description: "Physiotherapist" },
+            { name: "Dr. Ravindra Kumar Srivastava", location: "Lucknow/Indira Nagar", clinic: "Ravindra Physiotherapy", contact: "8840008791", description: "Physiotherapist" },
+            { name: "Dr. Fatema Gabajiwala", location: "Mumbai/Andheri E", clinic: "Physiocare", contact: "9930853667", description: "Physiotherapist" },
+            { name: "Dr. Anjali", location: "Delhi/South Delhi", clinic: "CB Physiotherapy", contact: "11 4306 0832", description: "Physiotherapist" },
+            { name: "Dr. Pranav", location: "Delhi/Dwarka", clinic: "Neurology and Physiotherapy Clinic", contact: "9953606662", description: "Neurology and Physiotherapy" },
+            { name: "Dr. Vikas", location: "Delhi/Dwarka", clinic: "Neurology and Physiotherapy Clinic", contact: "9953606662", description: "Neurology and Physiotherapy" },
+            { name: "Dr. Zoha", location: "Mumbai/Girgaon", clinic: "TheraCure Clinic", contact: "9967994420", description: "Physiotherapist" },
+            { name: "Dr. Arwa", location: "Mumbai/Girgaon", clinic: "TheraCure Clinic", contact: "9967994420", description: "Physiotherapist" },
+            { name: "Dr. Sheetal", location: "Mumbai/Malad West", clinic: "PhysioHub", contact: "9987973866", description: "Physiotherapist" },
+            { name: "Dr. Snehal", location: "Mumbai/Malad West", clinic: "PhysioHub", contact: "9987973866", description: "Physiotherapist" },
+            { name: "Dr. Moamen", location: "Bangalore/HSR Layout", clinic: "Hope Brain & Spine", contact: "8197170789", description: "Brain & Spine Specialist" },
+            { name: "Dr. Faheem", location: "Bangalore/RT Nagar", clinic: "Physio365", contact: "9886658365", description: "Physiotherapist" },
+            { name: "Dr. Nadeem", location: "Bangalore/RT Nagar", clinic: "Physio365", contact: "9886658365", description: "Physiotherapist" },
+            { name: "Dr. Kanchan", location: "Nagpur", clinic: "Neurosys Multispeciality Center", contact: "9325147941", description: "Multispeciality Center" },
+            { name: "Dr. Priti", location: "Nagpur", clinic: "Neurosys Multispeciality Center", contact: "9325147941", description: "Multispeciality Center" },
+            { name: "Dr. Ankita Singh", location: "Patna", clinic: "Sai Healthcare Wellness Center", contact: "7050112111", description: "Wellness Center" }
+        ];
+
+        // Instant relaxation exercises for mild issues
+        const instantRelaxationExercises = [
+            {
+                title: '5-Minute Breathing Exercise',
+                description: 'A quick breathing technique to calm your mind instantly',
+                steps: [
+                    'Find a comfortable sitting position',
+                    'Close your eyes and take a deep breath through your nose (4 seconds)',
+                    'Hold your breath (4 seconds)',
+                    'Exhale slowly through your mouth (6 seconds)',
+                    'Repeat 5-10 times',
+                    'Focus only on your breathing'
+                ],
+                duration: '5 minutes',
+                when: 'Anytime you feel stressed or anxious'
+            },
+            {
+                title: 'Quick Body Scan Relaxation',
+                description: 'Release tension from your body in just a few minutes',
+                steps: [
+                    'Sit or lie down comfortably',
+                    'Start from your toes, tense them for 3 seconds, then release',
+                    'Move up to your calves, tense and release',
+                    'Continue: thighs, stomach, hands, arms, shoulders',
+                    'Finally, scrunch your face and release',
+                    'Take 3 deep breaths'
+                ],
+                duration: '3-5 minutes',
+                when: 'When feeling physical tension or before sleep'
+            },
+            {
+                title: '60-Second Mindfulness Pause',
+                description: 'Reset your mind in just one minute',
+                steps: [
+                    'Stop what you\'re doing',
+                    'Take 3 deep breaths',
+                    'Notice 5 things you can see around you',
+                    'Notice 4 things you can touch',
+                    'Notice 3 things you can hear',
+                    'Notice 2 things you can smell',
+                    'Notice 1 thing you can taste',
+                    'Take 3 more deep breaths'
+                ],
+                duration: '1 minute',
+                when: 'During work or study breaks'
+            },
+            {
+                title: 'Quick Neck and Shoulder Release',
+                description: 'Instant relief for neck and shoulder tension',
+                steps: [
+                    'Slowly roll your shoulders backward 5 times',
+                    'Slowly roll your shoulders forward 5 times',
+                    'Gently tilt your head to the right, hold for 10 seconds',
+                    'Gently tilt your head to the left, hold for 10 seconds',
+                    'Slowly rotate your head in a circle 3 times each direction',
+                    'Shake out your arms'
+                ],
+                duration: '2 minutes',
+                when: 'During long study or work sessions'
+            }
+        ];
+
+        // Analysis logic
+        function analyzeAnswers() {
+            const answers = JSON.parse(localStorage.getItem('questionnaireAnswers') || '{}');
+            const severity = calculateSeverity(answers);
+            const issues = [];
+            const recommendations = {
+                exercises: [],
+                instantExercises: [],
+                consultants: []
+            };
+
+            // Analyze energy levels
+            if (answers[1] === 'low' || answers[1] === 'very_low') {
+                issues.push('Low energy levels');
+                recommendations.exercises.push({
+                    title: 'Morning Energy Boost Routine',
+                    description: 'Start with 10 minutes of light stretching, followed by 15 minutes of brisk walking or jogging. This helps increase blood flow and energy levels.',
+                    frequency: 'Daily, preferably in the morning'
+                });
+            }
+
+            // Analyze sleep
+            if (answers[2] === '5-6' || answers[2] === 'less_5') {
+                issues.push('Insufficient sleep');
+                recommendations.exercises.push({
+                    title: 'Sleep-Promoting Yoga',
+                    description: 'Practice gentle yoga poses like Child\'s Pose, Legs-Up-The-Wall, and Corpse Pose before bedtime. Focus on deep breathing exercises.',
+                    frequency: '30 minutes before sleep, daily'
+                });
+                // Removed hardcoded sleep consultant
+            }
+
+            // Analyze stress
+            if (answers[3] === 'often' || answers[3] === 'daily') {
+                issues.push('High stress levels');
+                recommendations.exercises.push({
+                    title: 'Stress-Relief Meditation & Breathing',
+                    description: 'Practice 4-7-8 breathing technique: Inhale for 4 counts, hold for 7, exhale for 8. Repeat 4 times. Combine with 10-minute guided meditation.',
+                    frequency: 'Twice daily (morning and evening)'
+                });
+                recommendations.exercises.push({
+                    title: 'Progressive Muscle Relaxation',
+                    description: 'Tense and relax each muscle group for 5 seconds, starting from toes to head. This helps release physical tension.',
+                    frequency: 'Once daily, 15 minutes'
+                });
+                // Removed hardcoded stress consultant
+            }
+
+            // Analyze physical activity
+            if (answers[4] === 'moderate' || answers[4] === 'inactive') {
+                issues.push('Low physical activity');
+                recommendations.exercises.push({
+                    title: 'Beginner Cardio Routine',
+                    description: 'Start with 20 minutes of moderate-intensity exercise: 5 min warm-up walk, 10 min brisk walk/jog, 5 min cool-down. Gradually increase duration.',
+                    frequency: '3-4 times per week'
+                });
+                recommendations.exercises.push({
+                    title: 'Strength Training Basics',
+                    description: 'Bodyweight exercises: 3 sets of 10 squats, 10 push-ups (or knee push-ups), 10 lunges each leg. Focus on proper form.',
+                    frequency: '2-3 times per week'
+                });
+            }
+
+            // Analyze pain
+            if (answers[5] === 'moderate' || answers[5] === 'severe') {
+                issues.push('Physical pain or discomfort');
+                recommendations.exercises.push({
+                    title: 'Gentle Stretching & Mobility',
+                    description: 'Focus on gentle stretches for affected areas. Hold each stretch for 30 seconds, repeat 3 times. Avoid overstretching.',
+                    frequency: 'Daily, 15-20 minutes'
+                });
+
+                // Dynamically select 3 random Neuro Physiotherapists
+                const shuffledConsultants = [...neuroConsultants].sort(() => 0.5 - Math.random());
+                const selectedNeuro = shuffledConsultants.slice(0, 3);
+                selectedNeuro.forEach(doc => {
+                    recommendations.consultants.push({
+                        name: doc.name,
+                        specialty: `Neuro-Physiotherapist in ${doc.location}`,
+                        clinic: doc.clinic,
+                        contact: '', // Override to skip email mapping in original logic 
+                        phone: doc.contact,
+                        description: doc.description
+                    });
+                });
+            }
+
+            // Analyze eating habits
+            if (answers[6] === 'fair' || answers[6] === 'poor') {
+                issues.push('Unhealthy eating habits');
+                recommendations.exercises.push({
+                    title: 'Meal Planning & Prep',
+                    description: 'Not exactly exercise, but crucial: Plan meals weekly, prep healthy snacks, and maintain regular eating schedule. Combine with light activity after meals.',
+                    frequency: 'Weekly planning, daily meal prep'
+                });
+                // Removed hardcoded diet consultant
+            }
+
+            // Analyze coping ability
+            if (answers[7] === 'often' || answers[7] === 'sometimes') {
+                issues.push('Difficulty coping with challenges');
+                // Removed hardcoded coping consultant
+            }
+
+            // Analyze concentration
+            if (answers[8] === 'often') {
+                issues.push('Difficulty concentrating');
+                recommendations.exercises.push({
+                    title: 'Mindfulness & Focus Training',
+                    description: 'Practice focused attention exercises: Set a timer for 5 minutes, focus on your breath, gently return attention when mind wanders.',
+                    frequency: 'Daily, gradually increase to 10-15 minutes'
+                });
+            }
+
+            // Analyze social connections
+            if (answers[9] === 'fair' || answers[9] === 'poor') {
+                issues.push('Limited social connections');
+                recommendations.exercises.push({
+                    title: 'Group Exercise Activities',
+                    description: 'Join a local sports team, fitness class, or walking group. Physical activity combined with social interaction improves both physical and mental health.',
+                    frequency: '2-3 times per week'
+                });
+            }
+
+            // Add instant relaxation exercises for mild issues
+            if (severity === 'mild' || issues.length <= 2) {
+                recommendations.instantExercises = instantRelaxationExercises.slice(0, 2); // Show 2 exercises
+            } else if (severity === 'moderate') {
+                recommendations.instantExercises = instantRelaxationExercises.slice(0, 3); // Show 3 exercises
+            }
+
+            // Default recommendations if no major issues
+            if (issues.length === 0) {
+                recommendations.exercises.push({
+                    title: 'Maintenance Fitness Routine',
+                    description: 'Continue your current activity level. Consider adding variety: try new activities, set new fitness goals, or join a fitness challenge.',
+                    frequency: 'As per your current schedule'
+                });
+            }
+
+            recommendations.severity = severity;
+
+            // Removed hardcoded general wellness consultant
+
+            return { issues, recommendations };
+        }
+
+        function displayResults() {
+            const { issues, recommendations } = analyzeAnswers();
+            const severity = recommendations.severity || 'mild';
+
+            // Display issues with severity indicator
+            const issuesSection = document.getElementById('issuesSection');
+            const severityClass = `severity-${severity}`;
+            const severityLabel = severity.charAt(0).toUpperCase() + severity.slice(1);
+
+            if (issues.length > 0) {
+                issuesSection.innerHTML = `
+                    <div class="issues-card">
+                        <h3>Identified Health Concerns 
+                            <span class="severity-indicator ${severityClass}">${severityLabel} Risk</span>
+                        </h3>
+                        <ul class="issue-list">
+                            ${issues.map(issue => `<li>${issue}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                issuesSection.innerHTML = `
+                    <div class="section" style="background: #f0fdf4; border-left: 4px solid #22c55e;">
+                        <h3 style="color: #166534;">Great News! 🎉</h3>
+                        <p style="color: #15803d;">Based on your responses, you're maintaining good health practices. The recommendations below will help you continue on this positive path.</p>
+                    </div>
+                `;
+            }
+
+            // Display instant relaxation exercises for mild/moderate cases
+            if (recommendations.instantExercises && recommendations.instantExercises.length > 0) {
+                const exercisesSection = document.getElementById('exercisesSection');
+                exercisesSection.innerHTML = `
+                    <div class="section">
+                        <h2 class="section-title">
+                            <span class="icon">🧘</span>
+                            Instant Relaxation Exercises
+                        </h2>
+                        <p style="color: #6b7280; margin-bottom: 20px;">Try these quick exercises anytime you need instant relief from stress or tension:</p>
+                        ${recommendations.instantExercises.map(ex => `
+                            <div class="instant-exercise">
+                                <h4>⚡ ${ex.title}</h4>
+                                <p><strong>Duration:</strong> ${ex.duration} | <strong>When to use:</strong> ${ex.when}</p>
+                                <p>${ex.description}</p>
+                                <div class="exercise-steps">
+                                    <strong>Steps:</strong>
+                                    <ol>
+                                        ${ex.steps.map(step => `<li>${step}</li>`).join('')}
+                                    </ol>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Display regular exercises (only if instant exercises section wasn't already created)
+            if (!recommendations.instantExercises || recommendations.instantExercises.length === 0) {
+                const exercisesSection = document.getElementById('exercisesSection');
+                exercisesSection.innerHTML = `
+                    <div class="section">
+                        <h2 class="section-title">
+                            <span class="icon">💪</span>
+                            Recommended Exercises & Activities
+                        </h2>
+                        ${recommendations.exercises.map(ex => `
+                            <div class="exercise-item">
+                                <h4>${ex.title}</h4>
+                                <p>${ex.description}</p>
+                                <p><strong>Frequency:</strong> ${ex.frequency}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (recommendations.exercises.length > 0) {
+                // Add regular exercises after instant exercises
+                const exercisesSection = document.getElementById('exercisesSection');
+                exercisesSection.innerHTML += `
+                    <div class="section" style="margin-top: 24px;">
+                        <h2 class="section-title">
+                            <span class="icon">💪</span>
+                            Regular Exercises & Activities
+                        </h2>
+                        ${recommendations.exercises.map(ex => `
+                            <div class="exercise-item">
+                                <h4>${ex.title}</h4>
+                                <p>${ex.description}</p>
+                                <p><strong>Frequency:</strong> ${ex.frequency}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Display consultants
+            const consultantsSection = document.getElementById('consultantsSection');
+            if (recommendations.consultants && recommendations.consultants.length > 0) {
+                consultantsSection.innerHTML = `
+                    <div class="section">
+                        <h2 class="section-title">
+                            <span class="icon">👨‍⚕️</span>
+                            Recommended Professional Consultants
+                        </h2>
+                        <div class="grid">
+                            ${recommendations.consultants.map(consultant => `
+                                <div class="consultant-item">
+                                    <div class="consultant-photo" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 48px; font-weight: bold; border: 4px solid #0ea5e9;">
+                                        ${consultant.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <h4 style="text-align: center;">${consultant.name}</h4>
+                                    <p><strong>Specialty:</strong> ${consultant.specialty}</p>
+                                    ${consultant.clinic ? `<p><strong>Clinic:</strong> ${consultant.clinic}</p>` : ''}
+                                    <p>${consultant.description}</p>
+                                    <div class="contact">
+                                        ${consultant.contact ? `<p><strong>📧 Email:</strong> <a href="mailto:${consultant.contact}" style="color: #0ea5e9;">${consultant.contact}</a></p>` : ''}
+                                        <p><strong>📞 Phone:</strong> <a href="tel:${consultant.phone}" style="color: #0ea5e9;">${consultant.phone}</a></p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                consultantsSection.innerHTML = '';
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userAuthenticated');
+                localStorage.removeItem('questionnaireAnswers');
+                localStorage.removeItem('questionnaireCompleted');
+                window.location.href = 'user-login.html';
+            }
+        }
+
+        // Check for awareness alerts
+        function checkUserAwareness() {
+            const { issues } = analyzeAnswers();
+            if (issues.length > 0) {
+                setTimeout(() => {
+                    showUserAwarenessPopup(issues[0]);
+                }, 2000);
+            }
+        }
+
+        function showUserAwarenessPopup(issue) {
+            const awarenessMessages = {
+                'Low energy levels': '💡 Tip: Low energy can be improved with regular exercise and better sleep habits. Consider our energy boost exercises!',
+                'Insufficient sleep': '😴 Important: Getting enough sleep is crucial for your health. Try our sleep-promoting yoga routine!',
+                'High stress levels': '🧘 Reminder: High stress affects your wellbeing. Our stress-relief exercises can help you manage better.',
+                'Low physical activity': '🏃 Get Moving: Regular physical activity improves both physical and mental health. Start with our beginner routines!',
+                'Physical pain or discomfort': '🏥 Health Alert: Persistent pain should be evaluated by a healthcare professional. Consider consulting our recommended specialists.',
+                'Unhealthy eating habits': '🥗 Nutrition Matters: A balanced diet is key to good health. Our nutrition consultant can help create a meal plan.',
+                'Difficulty coping with challenges': '💪 Support Available: It\'s okay to seek help when facing challenges. Our mental health counselors are here to support you.',
+                'Difficulty concentrating': '🎯 Focus Help: Concentration issues can be improved with mindfulness practices. Try our focus training exercises!',
+                'Limited social connections': '👥 Connect: Strong social connections improve mental health. Consider joining group activities or reaching out to support networks.'
+            };
+
+            const message = awarenessMessages[issue] || `⚠️ We've identified "${issue}" as an area that may need attention. Check out our recommendations above!`;
+
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 1000;
+                max-width: 400px;
+                animation: slideIn 0.3s ease-out;
+            `;
+            popup.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                    <h3 style="margin: 0; font-size: 18px;">Health Awareness</h3>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+                </div>
+                <p style="margin: 0; line-height: 1.6;">${message}</p>
+            `;
+
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => popup.remove(), 300);
+            }, 8000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        async function playResultsAudio() {
+            const btn = document.getElementById('aiInsightsBtn');
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.innerHTML = '🤖 Generating Insights...';
+                btn.disabled = true;
+
+                // 1. Gather results data
+                const { issues, recommendations } = analyzeAnswers();
+                const severity = recommendations.severity || 'mild';
+
+                // 2. Format a summary sentence
+                let summaryText = `Hello! Thank you for completing the assessment. Your health profile indicates a ${severity} risk level. `;
+
+                if (issues.length === 0) {
+                    summaryText += "Great news! We found no major health concerns. Keep up the good work!";
+                } else if (issues.length === 1) {
+                    summaryText += `We identified one primary area for improvement: ${issues[0]}. Please check the recommendations below.`;
+                } else {
+                    summaryText += `We identified ${issues.length} areas for improvement, including ${issues[0]} and ${issues[1]}. Please review your personalized exercise and consultant recommendations below.`;
+                }
+
+                // 3. Call Sarvam Text-to-Speech API
+                const response = await fetch("https://api.sarvam.ai/text-to-speech", {
+                    method: "POST",
+                    headers: {
+                        "api-subscription-key": SARVAM_API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "inputs": [summaryText],
+                        "target_language_code": "en-IN",
+                        "speaker": "tanya",
+                        "pitch": 0,
+                        "pace": 1.05,
+                        "loudness": 1.5,
+                        "speech_sample_rate": 8000,
+                        "enable_preprocessing": true,
+                        "model": "bulbul:v3"
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 4. Play the audio
+                if (data && data.audios && data.audios[0]) {
+                    const audioStr = data.audios[0];
+                    const audio = new Audio("data:audio/wav;base64," + audioStr);
+                    btn.innerHTML = '🔊 Speaking...';
+
+                    audio.onended = () => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    };
+
+                    audio.play();
+                } else {
+                    throw new Error("No audio payload returned");
+                }
+
+            } catch (error) {
+                console.error("Sarvam TTS Error:", error);
+                alert("Could not generate AI audio. Check console for details.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('aiChatInput');
+            const submitBtn = document.getElementById('aiChatSubmit');
+            const historyEl = document.getElementById('chatHistory');
+
+            const userText = inputEl.value.trim();
+            if (!userText) return;
+
+            // Show history container if hidden
+            historyEl.style.display = 'block';
+
+            // Add user message to UI
+            historyEl.innerHTML += `<div style="margin-bottom: 12px; text-align: right;"><span style="background: #0ea5e9; color: white; padding: 10px 16px; border-radius: 16px 16px 0 16px; display: inline-block; max-width: 80%;">${userText}</span></div>`;
+
+            inputEl.value = '';
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Thinking...';
+
+            try {
+                // Get user context
+                const { issues } = analyzeAnswers();
+                const contextIssues = issues.length > 0 ? issues.join(", ") : "None";
+
+                const systemPrompt = "You are a helpful, empathetic health assistant for a young adult. The user's health assessment identified these issues: " + contextIssues + ". Answer their queries concisely and provide friendly, actionable advice.";
+
+                const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "api-subscription-key": SARVAM_API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "sarvam-m",
+                        "messages": [
+                            { "role": "system", "content": systemPrompt },
+                            { "role": "user", "content": userText }
+                        ],
+                        "temperature": 0.7,
+                        "max_tokens": 150
+                    })
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+
+                const aiText = data.choices[0].message.content;
+
+                historyEl.innerHTML += `<div style="margin-bottom: 12px; text-align: left;"><span style="background: #f3f4f6; color: #1f2937; padding: 10px 16px; border-radius: 16px 16px 16px 0; display: inline-block; max-width: 80%; line-height: 1.5;">${aiText}</span></div>`;
+
+            } catch (error) {
+                console.error("Sarvam Chat Error:", error);
+                historyEl.innerHTML += `<div style="margin-bottom: 12px; text-align: left;"><span style="background: #fee2e2; color: #991b1b; padding: 10px 16px; border-radius: 16px 16px 16px 0; display: inline-block; max-width: 80%;">Sorry, I ran into an error connecting to the AI. Please try again later.</span></div>`;
+            }
+
+            // Auto scroll to bottom
+            historyEl.scrollTop = historyEl.scrollHeight;
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Ask';
+        }
+
+        // Initialize
+        displayResults();
+        checkUserAwareness();
+
+        // Add Enter key listener for chat
+        document.getElementById('aiChatInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+    </script>
+</body>
+
+</html>

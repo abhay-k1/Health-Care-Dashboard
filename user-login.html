@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login - Youth Health Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            background: #bae6fd;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            background: #bfdbfe;
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes subtlePulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 4px 20px rgba(14, 165, 233, 0.6);
+            }
+        }
+
+        .container {
+            max-width: 650px;
+            width: 100%;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            padding: 24px 32px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .logo h1 .highlight {
+            color: #0ea5e9;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transform: translateY(-1px);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .demographics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .demographics-grid .form-group {
+            margin-bottom: 0px;
+        }
+
+        .demographics-grid label {
+            font-size: 13px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+        }
+
+        .forgot-link {
+            color: #0ea5e9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: #0284c7;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            color: white;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            animation: subtlePulse 3s infinite;
+        }
+
+        .login-button:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #0ea5e9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            color: #0284c7;
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .admin-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .admin-link a:hover {
+            color: #0ea5e9;
+        }
+
+        .otp-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .otp-section.active {
+            display: block;
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .otp-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .send-otp-btn {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 16px;
+        }
+
+        .send-otp-btn:hover {
+            background: #059669;
+        }
+
+        .send-otp-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-options {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .login-option-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .login-option-btn.active {
+            border-color: #0ea5e9;
+            background: #f0f9ff;
+            color: #0ea5e9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+
+    <div class="container animate-slide-up">
+        <div class="login-card">
+            <div class="logo animate-slide-up delay-1">
+                <h1>Youth Health <span class="highlight">Analytics</span></h1>
+                <p>User Portal - Health Assessment</p>
+            </div>
+
+            <div class="login-options animate-slide-up delay-2">
+                <button class="login-option-btn active" id="passwordLoginBtn"
+                    onclick="switchLoginMode('password')">Password Login</button>
+                <button class="login-option-btn" id="otpLoginBtn" onclick="switchLoginMode('otp')">OTP Login</button>
+            </div>
+
+            <!-- Password Login Form -->
+            <form id="userLoginForm" class="login-form animate-slide-up delay-3">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 8px;">Demographics (for
+                    completely anonymous analytics)</div>
+                <div class="demographics-grid">
+                    <div class="form-group">
+                        <label for="userAge">Age Group</label>
+                        <select id="userAge" name="userAge" required>
+                            <option value="">Select age</option>
+                            <option value="13-17">13-17</option>
+                            <option value="18-22">18-22</option>
+                            <option value="23-27">23-27</option>
+                            <option value="28-32">28-32</option>
+                            <option value="33+">33+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userGender">Gender</label>
+                        <select id="userGender" name="userGender" required>
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="non-binary">Non-binary</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userProfession">Current Status</label>
+                        <select id="userProfession" name="userProfession" required>
+                            <option value="">Select status</option>
+                            <option value="student">Student</option>
+                            <option value="working">Working</option>
+                            <option value="both">Both</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember" style="margin: 0; font-weight: normal;">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <button type="submit" class="login-button" id="loginButton">Sign in</button>
+            </form>
+
+            <!-- OTP Login Form -->
+            <form id="otpLoginForm" class="login-form animate-slide-up delay-3" style="display: none;">
+                <div class="form-group">
+                    <label for="otpEmail">Email Address</label>
+                    <input type="email" id="otpEmail" name="otpEmail" placeholder="Enter your email" required>
+                </div>
+
+                <div style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 8px;">Demographics (for
+                    completely anonymous analytics)</div>
+                <div class="demographics-grid">
+                    <div class="form-group">
+                        <label for="otpUserAge">Age Group</label>
+                        <select id="otpUserAge" name="otpUserAge" required>
+                            <option value="">Select age</option>
+                            <option value="13-17">13-17</option>
+                            <option value="18-22">18-22</option>
+                            <option value="23-27">23-27</option>
+                            <option value="28-32">28-32</option>
+                            <option value="33+">33+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="otpUserGender">Gender</label>
+                        <select id="otpUserGender" name="otpUserGender" required>
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="non-binary">Non-binary</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="otpUserProfession">Current Status</label>
+                        <select id="otpUserProfession" name="otpUserProfession" required>
+                            <option value="">Select status</option>
+                            <option value="student">Student</option>
+                            <option value="working">Working</option>
+                            <option value="both">Both</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="button" class="send-otp-btn" id="sendOtpBtn" onclick="sendOTP()">Send OTP</button>
+
+                <div class="otp-section" id="otpSection">
+                    <div class="otp-info">
+                        <strong>OTP Sent!</strong> Check your email for the 6-digit code. (Demo: OTP is <span
+                            id="demoOtp" style="font-weight: bold;"></span>)
+                    </div>
+                    <div class="form-group">
+                        <label>Enter OTP</label>
+                        <div class="otp-input-group">
+                            <input type="text" class="otp-input" id="otp1" maxlength="1"
+                                oninput="moveToNext(this, 'otp2')" onkeyup="handleOtpKeyup(event, 'otp1', null)">
+                            <input type="text" class="otp-input" id="otp2" maxlength="1"
+                                oninput="moveToNext(this, 'otp3')" onkeyup="handleOtpKeyup(event, 'otp2', 'otp1')">
+                            <input type="text" class="otp-input" id="otp3" maxlength="1"
+                                oninput="moveToNext(this, 'otp4')" onkeyup="handleOtpKeyup(event, 'otp3', 'otp2')">
+                            <input type="text" class="otp-input" id="otp4" maxlength="1"
+                                oninput="moveToNext(this, 'otp5')" onkeyup="handleOtpKeyup(event, 'otp4', 'otp3')">
+                            <input type="text" class="otp-input" id="otp5" maxlength="1"
+                                oninput="moveToNext(this, 'otp6')" onkeyup="handleOtpKeyup(event, 'otp5', 'otp4')">
+                            <input type="text" class="otp-input" id="otp6" maxlength="1"
+                                onkeyup="handleOtpKeyup(event, 'otp6', 'otp5')">
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="otpErrorMessage"></div>
+
+                    <button type="submit" class="login-button" id="verifyOtpBtn">Verify OTP</button>
+                </div>
+            </form>
+
+            <div
+                style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-top: 16px; margin-bottom: 12px;">
+                <p style="font-size: 13px; color: #0c4a6e; margin-bottom: 4px; font-weight: 600;">📋 Test Credentials:
+                </p>
+                <div
+                    style="font-size: 12px; color: #075985; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                    <div><strong>E:</strong> user@health.com</div>
+                    <div><strong>P:</strong> user123</div>
+                    <div><strong>E:</strong> student@health.com</div>
+                    <div><strong>P:</strong> student123</div>
+                    <div><strong>E:</strong> test@health.com</div>
+                    <div><strong>P:</strong> test123</div>
+                    <div><strong>E:</strong> demo@health.com</div>
+                    <div><strong>P:</strong> demo123</div>
+                </div>
+            </div>
+
+            <div class="signup-link">
+                Don't have an account? <a href="#"
+                    onclick="alert('Please contact your administrator to create an account.'); return false;">Contact
+                    administrator</a>
+            </div>
+
+            <div class="admin-link">
+                <a href="researcher-login.html" style="margin-right: 16px;">Researcher Login →</a>
+                <a href="index.html">Admin Login →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let generatedOTP = '';
+        let otpExpiryTime = null;
+
+        const loginForm = document.getElementById('userLoginForm');
+        const otpLoginForm = document.getElementById('otpLoginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const otpErrorMessage = document.getElementById('otpErrorMessage');
+        const loginButton = document.getElementById('loginButton');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+
+        // Check if already logged in
+        if (localStorage.getItem('userAuthenticated') === 'true') {
+            window.location.href = 'questionnaire.html';
+        }
+
+        // Switch between password and OTP login
+        function switchLoginMode(mode) {
+            const passwordBtn = document.getElementById('passwordLoginBtn');
+            const otpBtn = document.getElementById('otpLoginBtn');
+
+            if (mode === 'password') {
+                passwordBtn.classList.add('active');
+                otpBtn.classList.remove('active');
+                loginForm.style.display = 'block';
+                otpLoginForm.style.display = 'none';
+                document.getElementById('otpSection').classList.remove('active');
+                clearOtpInputs();
+            } else {
+                passwordBtn.classList.remove('active');
+                otpBtn.classList.add('active');
+                loginForm.style.display = 'none';
+                otpLoginForm.style.display = 'block';
+            }
+        }
+
+        // Password login
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Hide previous errors
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+
+            // Basic validation
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+
+            // Validate age is selected
+            const age = document.getElementById('userAge').value;
+            if (!age) {
+                showError('Please select your age group');
+                return;
+            }
+
+            // Validate gender is selected
+            const gender = document.getElementById('userGender').value;
+            if (!gender) {
+                showError('Please select your gender');
+                return;
+            }
+
+            // Validate profession is selected
+            const profession = document.getElementById('userProfession').value;
+            if (!profession) {
+                showError('Please select your current status');
+                return;
+            }
+
+            // Show loading state
+            loginButton.disabled = true;
+            loginButton.textContent = 'Signing in...';
+
+            // Simulate API call
+            setTimeout(() => {
+                // Valid user credentials
+                const validUsers = [
+                    { email: 'user@health.com', password: 'user123' },
+                    { email: 'student@health.com', password: 'student123' },
+                    { email: 'test@health.com', password: 'test123' },
+                    { email: 'demo@health.com', password: 'demo123' }
+                ];
+
+                const user = validUsers.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    // Get age, gender and profession from form
+                    const age = document.getElementById('userAge').value;
+                    const gender = document.getElementById('userGender').value;
+                    const profession = document.getElementById('userProfession').value;
+
+                    // Track user login
+                    trackUserLogin(email);
+
+                    // Store authentication
+                    localStorage.setItem('userAuthenticated', 'true');
+                    localStorage.setItem('userEmail', email);
+
+                    // Save demographics if provided
+                    if (age && gender && profession) {
+                        const userDemographics = { age: age, gender: gender, profession: profession };
+                        localStorage.setItem('userDemographics', JSON.stringify(userDemographics));
+
+                        // Also save to demographics tracking
+                        const demographicsTracking = JSON.parse(localStorage.getItem('demographicsTracking') || '[]');
+                        const existingIndex = demographicsTracking.findIndex(d => d.email === email);
+                        const demoData = {
+                            email: email,
+                            age: age,
+                            gender: gender,
+                            profession: profession,
+                            timestamp: Date.now()
+                        };
+                        if (existingIndex >= 0) {
+                            demographicsTracking[existingIndex] = demoData;
+                        } else {
+                            demographicsTracking.push(demoData);
+                        }
+                        localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+                    }
+
+                    // Redirect to questionnaire
+                    window.location.href = 'questionnaire.html';
+                } else {
+                    showError('Invalid email or password. Please check your credentials.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Sign in';
+                }
+            }, 500);
+        });
+
+        // Track user login function
+        function trackUserLogin(email) {
+            const allLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
+
+            // Check if this user already logged in before
+            const existingLogin = allLogins.find(login => login.email === email);
+
+            if (!existingLogin) {
+                // New user login
+                allLogins.push({
+                    email: email,
+                    firstLogin: Date.now(),
+                    lastLogin: Date.now(),
+                    loginCount: 1
+                });
+            } else {
+                // Update existing user
+                existingLogin.lastLogin = Date.now();
+                existingLogin.loginCount = (existingLogin.loginCount || 1) + 1;
+            }
+
+            localStorage.setItem('allUserLogins', JSON.stringify(allLogins));
+        }
+
+        // Generate 6-digit OTP
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Send OTP
+        function sendOTP() {
+            try {
+                const email = document.getElementById('otpEmail').value;
+                const sendOtpButton = document.getElementById('sendOtpBtn');
+
+                if (!email) {
+                    showOtpError('Please enter your email address');
+                    return;
+                }
+
+                // Validate age is selected
+                const age = document.getElementById('otpUserAge').value;
+                if (!age) {
+                    showOtpError('Please select your age group');
+                    return;
+                }
+
+                // Validate gender is selected
+                const gender = document.getElementById('otpUserGender').value;
+                if (!gender) {
+                    showOtpError('Please select your gender');
+                    return;
+                }
+
+                // Validate profession is selected
+                const profession = document.getElementById('otpUserProfession').value;
+                if (!profession) {
+                    showOtpError('Please select your current status');
+                    return;
+                }
+
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showOtpError('Please enter a valid email address');
+                    return;
+                }
+
+                // Validate email is from valid users list
+                const validUsers = [
+                    'user@health.com',
+                    'student@health.com',
+                    'test@health.com',
+                    'demo@health.com'
+                ];
+
+                if (!validUsers.includes(email)) {
+                    showOtpError('Please use a valid user email: user@health.com, student@health.com, test@health.com, or demo@health.com');
+                    return;
+                }
+
+                // Generate OTP
+                generatedOTP = generateOTP();
+                otpExpiryTime = Date.now() + (5 * 60 * 1000); // 5 minutes
+
+                // Store OTP in localStorage for demo
+                localStorage.setItem('userOTP', generatedOTP);
+                localStorage.setItem('userOTPEmail', email);
+                localStorage.setItem('userOTPExpiry', otpExpiryTime.toString());
+
+                // Show OTP section
+                const otpSection = document.getElementById('otpSection');
+                const demoOtpSpan = document.getElementById('demoOtp');
+
+                if (otpSection) {
+                    otpSection.classList.add('active');
+                }
+
+                if (demoOtpSpan) {
+                    demoOtpSpan.textContent = generatedOTP;
+                }
+
+                // Disable send button temporarily
+                if (sendOtpButton) {
+                    sendOtpButton.disabled = true;
+                    sendOtpButton.textContent = 'OTP Sent!';
+
+                    // Re-enable after 30 seconds
+                    setTimeout(() => {
+                        sendOtpButton.disabled = false;
+                        sendOtpButton.textContent = 'Resend OTP';
+                    }, 30000);
+                }
+
+                // Clear previous OTP inputs
+                clearOtpInputs();
+
+                // Focus first OTP input
+                setTimeout(() => {
+                    const otp1 = document.getElementById('otp1');
+                    if (otp1) otp1.focus();
+                }, 100);
+            } catch (error) {
+                console.error('Error in sendOTP:', error);
+                alert('An error occurred. Please try again or check browser console.');
+            }
+        }
+
+        // Verify OTP
+        otpLoginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const enteredOTP = getEnteredOTP();
+            const storedOTP = localStorage.getItem('userOTP');
+            const storedEmail = localStorage.getItem('userOTPEmail');
+            const expiryTime = parseInt(localStorage.getItem('userOTPExpiry') || '0');
+            const currentEmail = document.getElementById('otpEmail').value;
+
+            // Hide previous errors
+            otpErrorMessage.classList.remove('show');
+            otpErrorMessage.textContent = '';
+
+            // Validate OTP length
+            if (enteredOTP.length !== 6) {
+                showOtpError('Please enter the complete 6-digit OTP');
+                return;
+            }
+
+            // Check if OTP expired
+            if (Date.now() > expiryTime) {
+                showOtpError('OTP has expired. Please request a new one.');
+                document.getElementById('otpSection').classList.remove('active');
+                clearOtpInputs();
+                return;
+            }
+
+            // Check email match
+            if (currentEmail !== storedEmail) {
+                showOtpError('Email does not match. Please request a new OTP.');
+                return;
+            }
+
+            // Verify OTP
+            if (enteredOTP === storedOTP) {
+                // Show loading state
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.textContent = 'Verifying...';
+
+                setTimeout(() => {
+                    // Validate email against valid users
+                    const validUsers = [
+                        { email: 'user@health.com', password: 'user123' },
+                        { email: 'student@health.com', password: 'student123' },
+                        { email: 'test@health.com', password: 'test123' },
+                        { email: 'demo@health.com', password: 'demo123' }
+                    ];
+
+                    const user = validUsers.find(u => u.email === currentEmail);
+
+                    if (user) {
+                        // Get age, gender and profession from form
+                        const age = document.getElementById('otpUserAge').value;
+                        const gender = document.getElementById('otpUserGender').value;
+                        const profession = document.getElementById('otpUserProfession').value;
+
+                        // Track user login
+                        trackUserLogin(currentEmail);
+
+                        // Store authentication
+                        localStorage.setItem('userAuthenticated', 'true');
+                        localStorage.setItem('userEmail', currentEmail);
+
+                        // Save demographics if provided
+                        if (age && gender && profession) {
+                            const userDemographics = { age: age, gender: gender, profession: profession };
+                            localStorage.setItem('userDemographics', JSON.stringify(userDemographics));
+
+                            // Also save to demographics tracking
+                            const demographicsTracking = JSON.parse(localStorage.getItem('demographicsTracking') || '[]');
+                            const existingIndex = demographicsTracking.findIndex(d => d.email === currentEmail);
+                            const demoData = {
+                                email: currentEmail,
+                                age: age,
+                                gender: gender,
+                                profession: profession,
+                                timestamp: Date.now()
+                            };
+                            if (existingIndex >= 0) {
+                                demographicsTracking[existingIndex] = demoData;
+                            } else {
+                                demographicsTracking.push(demoData);
+                            }
+                            localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+                        }
+
+                        // Clear OTP data
+                        localStorage.removeItem('userOTP');
+                        localStorage.removeItem('userOTPEmail');
+                        localStorage.removeItem('userOTPExpiry');
+
+                        // Redirect to questionnaire
+                        window.location.href = 'questionnaire.html';
+                    } else {
+                        showOtpError('Invalid email. Please use a valid user email.');
+                        verifyOtpBtn.disabled = false;
+                        verifyOtpBtn.textContent = 'Verify OTP';
+                    }
+                }, 500);
+            } else {
+                showOtpError('Invalid OTP. Please try again.');
+                clearOtpInputs();
+            }
+        });
+
+        // Helper functions
+        function getEnteredOTP() {
+            return document.getElementById('otp1').value +
+                document.getElementById('otp2').value +
+                document.getElementById('otp3').value +
+                document.getElementById('otp4').value +
+                document.getElementById('otp5').value +
+                document.getElementById('otp6').value;
+        }
+
+        function clearOtpInputs() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`otp${i}`).value = '';
+            }
+        }
+
+        function moveToNext(current, nextId) {
+            if (current.value.length === 1 && nextId) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        function handleOtpKeyup(event, currentId, prevId) {
+            if (event.key === 'Backspace' && !event.target.value && prevId) {
+                document.getElementById(prevId).focus();
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        function showOtpError(message) {
+            otpErrorMessage.textContent = message;
+            otpErrorMessage.classList.add('show');
+        }
+
+        // Auto-focus first OTP input when section becomes visible
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.target.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.getElementById('otp1').focus();
+                    }, 100);
+                }
+            });
+        });
+
+        observer.observe(document.getElementById('otpSection'), {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
+</body>
+
+</html>

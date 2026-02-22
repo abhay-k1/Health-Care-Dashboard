@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Researcher Login - Youth Health Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #dcfce7 100%);
+            background-size: 300% 300%;
+            animation: gradientFade 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes gradientFade {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            background: #bbf7d0;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            background: #dcfce7;
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes subtlePulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 4px 20px rgba(22, 163, 74, 0.6);
+            }
+        }
+
+        .container {
+            max-width: 950px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            color: #374151;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .info-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .info-title .highlight {
+            color: #10b981;
+        }
+
+        .info-description {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: #4b5563;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .feature-icon {
+            color: #16a34a;
+            margin-right: 12px;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .feature-text strong {
+            color: #1f2937;
+            display: block;
+            margin-bottom: 2px;
+            font-size: 15px;
+        }
+
+        .docs-button {
+            display: inline-flex;
+            align-items: center;
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .docs-button:hover {
+            background: #dcfce7;
+            transform: translateY(-1px);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .logo h1 .highlight {
+            color: #10b981;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 40px;
+            left: 12px;
+            color: #9ca3af;
+            width: 16px;
+            height: 16px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 14px 10px 36px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #16a34a;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 6px;
+        }
+
+        .forgot-link {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: #15803d;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .login-button {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .login-button:hover {
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .admin-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .admin-link a:hover {
+            color: #16a34a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+
+    <div class="container animate-slide-up">
+        <!-- Professional Information Section -->
+        <div class="info-card animate-slide-up delay-1">
+            <h2 class="info-title">Global Health <span class="highlight">Data Archive</span></h2>
+            <p class="info-description">
+                Welcome to the unified researcher portal. Gain secure access to longitudinal, fully-anonymized
+                demographic and psychometric health data across diverse populations.
+            </p>
+
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <svg class="feature-icon" style="color: #0ea5e9; width: 22px; height: 22px;" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path fill="#fff" d="M10 15.5l-3.5-3.5 1.5-1.5L10 12.5 16 6.5 17.5 8z" />
+                    </svg>
+                    <div class="feature-text">
+                        <strong>HIPAA & GDPR Compliant</strong>
+                        All datasets are thoroughly de-identified. No personally identifiable information (PII) is
+                        stored or exposed.
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <svg class="feature-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+                        <rect x="4" y="12" width="4" height="8" fill="#f87171" />
+                        <rect x="10" y="8" width="4" height="12" fill="#3b82f6" />
+                        <rect x="16" y="4" width="4" height="16" fill="#facc15" />
+                    </svg>
+                    <div class="feature-text">
+                        <strong>Age & Issue-Wise Analytics</strong>
+                        Dynamically slice cohorts by age, gender, and status to pinpoint rising health trends. Discover
+                        insights through automated correlation logic (e.g., Sleep vs. Stress incidence).
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <svg class="feature-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+                        <path fill="#60a5fa" d="M19 9h-4V3H9v6H5l7 7 7-7z" />
+                        <path fill="#f87171" d="M5 18v2h14v-2H5z" />
+                    </svg>
+                    <div class="feature-text">
+                        <strong>Export Anonymized Dataset (CSV)</strong>
+                        Download completely raw, anonymized arrays containing no personal data for comprehensive
+                        integration into your statistical software.
+                    </div>
+                </li>
+            </ul>
+
+            <div class="live-data-card"
+                style="background: rgba(255, 255, 255, 0.9); border-radius: 12px; padding: 14px; border: 1px solid #e5e7eb; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="font-size: 15px; color: #111827; font-weight: 700;">Research Summary</h3>
+                    <span
+                        style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;">LIVE</span>
+                </div>
+                <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">Top Reported Health Constraints</div>
+                <div id="topIssuesContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                    <!-- Inserted via JS -->
+                    <div style="color: #9ca3af; font-size: 13px; font-style: italic;">Loading securely aggregated
+                        data...</div>
+                </div>
+
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6;">
+                    <div style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Key
+                        Correlations:</div>
+                    <div id="correlationContainer" style="font-size: 13px; color: #4b5563; line-height: 1.5;">
+                        <span style="color: #9ca3af; font-style: italic;">Analyzing correlations...</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6;">
+                    <div style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px;">Suggested
+                        Topics:</div>
+                    <ul id="suggestedTopics"
+                        style="font-size: 13px; color: #4b5563; margin-left: 18px; line-height: 1.5; margin-bottom: 0;">
+                        <span style="color: #9ca3af; font-style: italic;">Detecting topics...</span>
+                    </ul>
+                </div>
+            </div>
+
+            <a href="#" class="docs-button"
+                onclick="alert('Documentation portal is currently under maintenance. Please contact the administrator for PDF guidelines.'); return false;">
+                📚 Access Research Documentation
+            </a>
+        </div>
+
+        <div class="login-card animate-slide-up delay-2">
+            <div class="logo">
+                <h1>Data <span class="highlight">Portal</span></h1>
+                <p>Researcher Access - Youth Health Analytics</p>
+            </div>
+
+            <form id="researcherLoginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    <input type="email" id="email" name="email" placeholder="Enter your researcher email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember" style="margin: 0; font-weight: normal;">Remember me</label>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <button type="submit" class="login-button" id="loginButton">Sign in</button>
+            </form>
+
+            <div
+                style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px; margin-top: 14px; margin-bottom: 14px;">
+                <p
+                    style="font-size: 13px; color: #166534; margin-bottom: 4px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Demo Credentials:
+                </p>
+                <div
+                    style="font-size: 13px; color: #15803d; line-height: 1.5; display: flex; gap: 16px; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        <strong>researcher@health.com</strong>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <strong>researcher123</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-link">
+                <a href="user-login.html" style="display: flex; align-items: center; gap: 4px;">
+                    <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Back to User Login
+                </a>
+            </div>
+
+            <div
+                style="text-align: center; margin-top: 12px; padding: 10px; background: #f3f4f6; border-radius: 8px; font-size: 9px; color: #6b7280; line-height: 1.4; display: flex; justify-content: center;">
+                <strong>Privacy Statement:</strong>&nbsp;This portal solely handles aggressively de-identified datasets.
+                No
+                names, emails, nor PII are stored.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('researcherLoginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginButton = document.getElementById('loginButton');
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            errorMessage.classList.remove('show');
+
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+
+            loginButton.disabled = true;
+            loginButton.textContent = 'Signing in...';
+
+            // Simulate API call
+            setTimeout(() => {
+                const validUsers = [
+                    { email: 'researcher@health.com', password: 'researcher123' }
+                ];
+
+                const user = validUsers.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    localStorage.setItem('researcherAuthenticated', 'true');
+                    window.location.href = 'researcher-dashboard.html';
+                } else {
+                    showError('Invalid credentials. Please check your email and password.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Sign in';
+                }
+            }, 500);
+        });
+
+        // --- Live Insights Logic ---
+
+        function analyzeSharedIssues(answers) {
+            const issues = [];
+            if (answers[1] === 'low' || answers[1] === 'very_low') issues.push('Low Energy');
+            if (answers[2] === '5-6' || answers[2] === 'less_5') issues.push('Sleep Deprivation');
+            if (answers[3] === 'often' || answers[3] === 'daily') issues.push('High Stress/Anxiety');
+            if (answers[4] === 'moderate' || answers[4] === 'inactive') issues.push('Physical Inactivity');
+            if (answers[5] === 'moderate' || answers[5] === 'severe') issues.push('Physical Pain');
+            if (answers[6] === 'fair' || answers[6] === 'poor') issues.push('Poor Nutrition');
+            if (answers[7] === 'often' || answers[7] === 'sometimes') issues.push('Coping Difficulties');
+            if (answers[8] === 'often') issues.push('Concentration Issues');
+            if (answers[9] === 'fair' || answers[9] === 'poor') issues.push('Social Isolation');
+            return issues;
+        }
+
+        function loadLiveInsights() {
+            try {
+                const rawUsers = localStorage.getItem('allUsersData');
+                if (!rawUsers) {
+                    document.getElementById('topIssuesContainer').innerHTML = `<div style="color: #6b7280; font-size: 13px;">Awaiting initial user assessments...</div>`;
+                    return;
+                }
+
+                const allUsers = JSON.parse(rawUsers);
+                const issueCounts = {};
+                let totalValid = 0;
+
+                allUsers.forEach(user => {
+                    if (user.data && user.data.questionnaire && user.data.questionnaire.answers) {
+                        totalValid++;
+                        const answers = user.data.questionnaire.answers;
+                        const userIssues = analyzeSharedIssues(answers);
+
+                        userIssues.forEach(issue => {
+                            issueCounts[issue] = (issueCounts[issue] || 0) + 1;
+                        });
+                    }
+                });
+
+                if (totalValid === 0) {
+                    document.getElementById('topIssuesContainer').innerHTML = `<div style="color: #6b7280; font-size: 13px;">Awaiting initial user assessments...</div>`;
+                    return;
+                }
+
+                // Sort and get top 3
+                const sortedIssues = Object.entries(issueCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+
+                const container = document.getElementById('topIssuesContainer');
+
+                if (sortedIssues.length === 0) {
+                    container.innerHTML = `<div style="color: #10b981; font-size: 13px;">No significant health constraints reported currently.</div>`;
+                    return;
+                }
+
+                let htmlContent = '';
+                const colors = ['#ea580c', '#ef4444', '#3b82f6']; // Orange, Red, Blue
+
+                sortedIssues.forEach((item, index) => {
+                    const issueName = item[0];
+                    const count = item[1];
+                    const percentage = Math.round((count / totalValid) * 100);
+                    const color = colors[index] || '#6b7280';
+
+                    htmlContent += `
+                        <div style="margin-bottom: 4px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="font-weight: 500; color: #374151;">${index + 1}. ${issueName}</span>
+                                <span style="color: #6b7280;">${percentage}% incidence</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden;">
+                                <div style="width: ${percentage}%; height: 100%; background: ${color}; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = htmlContent;
+
+                // Simple Correlation Logic
+                let sleepCount = 0;
+                let stressCount = 0;
+                let bothCount = 0;
+
+                let students = 0;
+                let studentPain = 0;
+
+                let youngAdults = 0; // 18-22
+                let youngAdultIsolation = 0;
+
+                allUsers.forEach(user => {
+                    if (user.data && user.data.questionnaire && user.data.questionnaire.answers && user.data.questionnaire.demographics) {
+                        const ans = user.data.questionnaire.answers;
+                        const demo = user.data.questionnaire.demographics;
+
+                        const hasSleepIssue = (ans[2] === '5-6' || ans[2] === 'less_5');
+                        const hasStressIssue = (ans[3] === 'often' || ans[3] === 'daily');
+
+                        if (hasSleepIssue) sleepCount++;
+                        if (hasStressIssue) stressCount++;
+                        if (hasSleepIssue && hasStressIssue) bothCount++;
+
+                        if (demo.profession === 'student' || demo.profession === 'both') {
+                            students++;
+                            if (ans[5] === 'moderate' || ans[5] === 'severe') studentPain++;
+                        }
+
+                        if (demo.age === '18-22') {
+                            youngAdults++;
+                            if (ans[9] === 'fair' || ans[9] === 'poor') youngAdultIsolation++;
+                        }
+                    }
+                });
+
+                const correlationOutput = document.getElementById('correlationContainer');
+                const topicsOutput = document.getElementById('suggestedTopics');
+
+                if (sleepCount > 0 && bothCount > 0) {
+                    const overlapPercent = Math.round((bothCount / stressCount) * 100);
+                    const studentPainPercent = students > 0 ? Math.round((studentPain / students) * 100) : 0;
+
+                    const checkmark = `<svg style="width: 12px; height: 12px; color: #10b981; flex-shrink: 0; margin-top: 3px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`;
+
+                    correlationOutput.innerHTML = `
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; gap: 6px; align-items: flex-start;">
+                                ${checkmark}
+                                <span style="font-size: 12px;"><strong>${overlapPercent}%</strong> of participants reporting High Stress also report Sleep Deprivation.</span>
+                            </div>
+                            <div style="display: flex; gap: 6px; align-items: flex-start;">
+                                ${checkmark}
+                                <span style="font-size: 12px;"><strong>Students</strong> are currently the highest risk group for Physical Pain (${studentPainPercent}% incidence).</span>
+                            </div>
+                        </div>
+                    `;
+
+                    let topicHtml = `
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 6px; align-items: flex-start;">
+                            ${checkmark}
+                            <span style="font-size: 12px;">Digital socialization vs perceived social isolation in young adults.</span>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: flex-start;">
+                            ${checkmark}
+                            <span style="font-size: 12px;">Chronic fatigue and its impact on the modern workforce.</span>
+                        </div>
+                    </div>
+                    `;
+
+                    topicsOutput.innerHTML = topicHtml;
+                } else {
+                    correlationOutput.innerHTML = "Not enough data for meaningful correlations.";
+                    topicsOutput.innerHTML = "Awaiting more data to generate suggestions.";
+                }
+
+            } catch (e) {
+                console.error("Error loading live insights:", e);
+            }
+        }
+
+        // Initialize insights when the page loads
+        window.addEventListener('load', loadLiveInsights);
+
+    </script>
+</body>
+
+</html>
