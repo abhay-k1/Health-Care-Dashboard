@@ -835,14 +835,20 @@
             window.location.href = 'researcher-login.html';
         }
 
-        async function generateResearcherAudio() {
+        function generateResearcherAudio() {
             const btn = document.getElementById('aiSummaryBtn');
             const originalText = btn.innerHTML;
 
             try {
-                btn.innerHTML = '🤖 Loading audio...';
-                btn.disabled = true;
+                // If already speaking, stop and return
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    btn.innerHTML = originalText;
+                    return;
+                }
 
+                btn.innerHTML = '🔊 Speaking...';
+                
                 // 1. Gather dashboard data
                 const assessments = document.getElementById('totalAssessments').textContent;
                 const topIssue = document.getElementById('topIssueLabel').textContent;
@@ -851,55 +857,42 @@
                 const ageFilter = document.getElementById('ageFilter').options[document.getElementById('ageFilter').selectedIndex].text;
 
                 // 2. Format a summary sentence
-                const summaryText = `Analytic report for the ${ageFilter} cohort: There are ${assessments} validity-checked assessments. The most prevalent issue is ${topIssue}. Furthermore, ${sleepDep} of this cohort reported sleep deprivation.`;
+                const summaryText = `Analytic report for the ${ageFilter} cohort: There are ${assessments} validity-checked assessments. The most prevalent issue is ${topIssue}. Furthermore, ${sleepDep.split('%')[0]} percent of this cohort reported sleep deprivation.`;
 
-                // 3. Call Sarvam Text-to-Speech API
-                const response = await fetch("https://api.sarvam.ai/text-to-speech", {
-                    method: "POST",
-                    headers: {
-                        "api-subscription-key": SARVAM_API_KEY,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        "inputs": [summaryText],
-                        "target_language_code": "en-IN",
-                        "speaker": "tanya",
-                        "pitch": 0,
-                        "pace": 1.05,
-                        "loudness": 1.5,
-                        "speech_sample_rate": 8000,
-                        "enable_preprocessing": true,
-                        "model": "bulbul:v3"
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API returned ${response.status}`);
+                const utterance = new SpeechSynthesisUtterance(summaryText);
+                window.currentUtterance = utterance;
+                
+                // Try to find an English voice, preferably Indian English
+                const voices = window.speechSynthesis.getVoices();
+                let selectedVoice = voices.find(voice => voice.lang.includes('en-IN') || voice.name.includes('India'));
+                
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.includes('en'));
+                }
+                
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
                 }
 
-                const data = await response.json();
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
 
-                // 4. Play the audio that the API returned
-                if (data && data.audios && data.audios[0]) {
-                    const audioStr = data.audios[0];
-                    const audio = new Audio("data:audio/wav;base64," + audioStr);
-                    btn.innerHTML = '🔊 Playing...';
+                utterance.onend = () => {
+                    btn.innerHTML = originalText;
+                };
 
-                    audio.onended = () => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    };
+                utterance.onerror = (e) => {
+                    console.error("Speech Synthesis Error:", e);
+                    btn.innerHTML = originalText;
+                    alert("Could not play audio. Please ensure your browser supports Text-to-Speech.");
+                };
 
-                    audio.play();
-                } else {
-                    throw new Error("No audio payload returned");
-                }
+                window.speechSynthesis.speak(utterance);
 
             } catch (error) {
-                console.error("Sarvam TTS Error:", error);
-                alert("Could not generate AI audio. Check console for details.");
+                console.error("Speech Synthesis Error:", error);
+                alert("Could not generate audio. Please check browser permissions.");
                 btn.innerHTML = originalText;
-                btn.disabled = false;
             }
         }
 

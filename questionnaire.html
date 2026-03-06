@@ -287,6 +287,56 @@
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
 
+        .emoji-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        @media (max-width: 480px) {
+            .emoji-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .emoji-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            user-select: none;
+        }
+        .emoji-card:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(14,165,233,0.15);
+        }
+        .emoji-card.selected {
+            border-color: #0ea5e9;
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(14,165,233,0.2);
+        }
+        .emoji-card .emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .emoji-card .emoji-label {
+            font-size: 12px;
+            color: #374151;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        .emoji-card.selected .emoji-label {
+            color: #0369a1;
+            font-weight: 700;
+        }
+
         /* Mobile specific adjustments */
         @media (max-width: 768px) {
             .container {
@@ -435,100 +485,100 @@
                     id: 1,
                     question: `How would you rate your energy levels for your ${workContext}?`,
                     options: [
-                        { value: "high", text: "Very high - I feel energetic most of the time" },
-                        { value: "moderate", text: "Moderate - I have energy but get tired sometimes" },
-                        { value: "low", text: "Low - I often feel tired or fatigued" },
-                        { value: "very_low", text: "Very low - I feel exhausted most of the time" }
+                        { value: "high", text: "Very High", emoji: "⚡" },
+                        { value: "moderate", text: "Moderate", emoji: "😊" },
+                        { value: "low", text: "Low", emoji: "😴" },
+                        { value: "very_low", text: "Exhausted", emoji: "💀" }
                     ]
                 },
                 {
                     id: 2,
                     question: "How many hours of sleep do you get per night on average?",
                     options: [
-                        { value: "9+", text: "9+ hours" },
-                        { value: "7-8", text: "7-8 hours" },
-                        { value: "5-6", text: "5-6 hours" },
-                        { value: "less_5", text: "Less than 5 hours" }
+                        { value: "9+", text: "9+ hrs", emoji: "😴" },
+                        { value: "7-8", text: "7-8 hrs", emoji: "🌙" },
+                        { value: "5-6", text: "5-6 hrs", emoji: "😵" },
+                        { value: "less_5", text: "Under 5", emoji: "🥴" }
                     ]
                 },
                 {
                     id: 3,
                     question: `How often do you experience stress or anxiety regarding your ${prepContext} responsibilities?`,
                     options: [
-                        { value: "rarely", text: "Rarely or never" },
-                        { value: "sometimes", text: "Sometimes (1-2 times per week)" },
-                        { value: "often", text: "Often (3-4 times per week)" },
-                        { value: "daily", text: "Daily or almost daily" }
+                        { value: "rarely", text: "Rarely", emoji: "😎" },
+                        { value: "sometimes", text: "Sometimes", emoji: "😬" },
+                        { value: "often", text: "Often", emoji: "😰" },
+                        { value: "daily", text: "Daily", emoji: "🤯" }
                     ]
                 },
                 {
                     id: 4,
                     question: "How would you describe your physical activity level?",
                     options: [
-                        { value: "very_active", text: "Very active - Exercise 5+ times per week" },
-                        { value: "active", text: "Active - Exercise 3-4 times per week" },
-                        { value: "moderate", text: "Moderate - Exercise 1-2 times per week" },
-                        { value: "inactive", text: "Inactive - Rarely or never exercise" }
+                        { value: "very_active", text: "Very Active", emoji: "🏃" },
+                        { value: "active", text: "Active", emoji: "🚶" },
+                        { value: "moderate", text: "Moderate", emoji: "🧘" },
+                        { value: "inactive", text: "Inactive", emoji: "🛋️" }
                     ]
                 },
                 {
                     id: 5,
                     question: `Do you experience any physical pain or discomfort (e.g., ${painContext})?`,
                     options: [
-                        { value: "none", text: "No pain or discomfort" },
-                        { value: "mild", text: "Mild pain occasionally" },
-                        { value: "moderate", text: "Moderate pain regularly" },
-                        { value: "severe", text: "Severe pain that affects daily activities" }
+                        { value: "none", text: "No Pain", emoji: "✅" },
+                        { value: "mild", text: "Mild", emoji: "😣" },
+                        { value: "moderate", text: "Moderate", emoji: "😖" },
+                        { value: "severe", text: "Severe", emoji: "🆘" }
                     ]
                 },
                 {
                     id: 6,
                     question: "How would you rate your eating habits during busy days?",
                     options: [
-                        { value: "excellent", text: "Excellent - Balanced meals, regular schedule" },
-                        { value: "good", text: "Good - Mostly healthy with occasional indulgences" },
-                        { value: "fair", text: "Fair - Inconsistent eating habits" },
-                        { value: "poor", text: "Poor - Irregular meals, mostly unhealthy food" }
+                        { value: "excellent", text: "Excellent", emoji: "🥗" },
+                        { value: "good", text: "Good", emoji: "🍱" },
+                        { value: "fair", text: "Fair", emoji: "🍕" },
+                        { value: "poor", text: "Poor", emoji: "🍔" }
                     ]
                 },
                 {
                     id: 7,
                     question: `How often do you feel overwhelmed by your ${prepContext} expectations?`,
                     options: [
-                        { value: "never", text: "Never" },
-                        { value: "rarely", text: "Rarely" },
-                        { value: "sometimes", text: "Sometimes" },
-                        { value: "often", text: "Often or always" }
+                        { value: "never", text: "Never", emoji: "😌" },
+                        { value: "rarely", text: "Rarely", emoji: "🙂" },
+                        { value: "sometimes", text: "Sometimes", emoji: "😮‍💨" },
+                        { value: "often", text: "Often", emoji: "😵‍💫" }
                     ]
                 },
                 {
                     id: 8,
                     question: `Do you have difficulty concentrating on ${focusContext}?`,
                     options: [
-                        { value: "never", text: "Never - I can focus well" },
-                        { value: "rarely", text: "Rarely" },
-                        { value: "sometimes", text: "Sometimes" },
-                        { value: "often", text: "Often - It's a significant problem" }
+                        { value: "never", text: "No Problem", emoji: "🎯" },
+                        { value: "rarely", text: "Rarely", emoji: "📖" },
+                        { value: "sometimes", text: "Sometimes", emoji: "📱" },
+                        { value: "often", text: "Often", emoji: "🌀" }
                     ]
                 },
                 {
                     id: 9,
                     question: isStudent ? "How would you describe your social connections with your peers and classmates?" : "How would you describe your social connections with colleagues and your personal network?",
                     options: [
-                        { value: "excellent", text: "Excellent - Strong support network" },
-                        { value: "good", text: "Good - Regular social interactions" },
-                        { value: "fair", text: "Fair - Limited social connections" },
-                        { value: "poor", text: "Poor - Isolated or minimal connections" }
+                        { value: "excellent", text: "Excellent", emoji: "🤝" },
+                        { value: "good", text: "Good", emoji: "👥" },
+                        { value: "fair", text: "Fair", emoji: "🙁" },
+                        { value: "poor", text: "Isolated", emoji: "🏝️" }
                     ]
                 },
                 {
                     id: 10,
                     question: isStudent ? "Have you experienced any significant life changes recently (e.g., new semester, graduating)?" : "Have you experienced any significant life changes recently (e.g., job transitions, moving)?",
                     options: [
-                        { value: "none", text: "No significant changes" },
-                        { value: "minor", text: "Minor changes" },
-                        { value: "moderate", text: "Moderate changes" },
-                        { value: "major", text: "Major life changes" }
+                        { value: "none", text: "Stable", emoji: "🏠" },
+                        { value: "minor", text: "Minor", emoji: "🌤️" },
+                        { value: "moderate", text: "Moderate", emoji: "🌧️" },
+                        { value: "major", text: "Major", emoji: "🌪️" }
                     ]
                 }
             ];
@@ -637,13 +687,15 @@
             const container = document.getElementById('questionContainer');
             container.innerHTML = `
                 <div class="question-card">
-                    <div class="question-number">Question ${index + 1}</div>
-                    <h2 class="question-title">${question.question}</h2>
-                    <div class="options" id="optionsContainer">
-                        ${question.options.map((option, optIndex) => `
-                            <div class="option ${answers[question.id] === option.value ? 'selected' : ''}" onclick="selectOption(${question.id}, '${option.value}')">
-                                <input type="radio" name="q${question.id}" value="${option.value}" id="q${question.id}_${optIndex}" ${answers[question.id] === option.value ? 'checked' : ''}>
-                                <label for="q${question.id}_${optIndex}">${option.text}</label>
+                    <div class="question-number">Question ${index + 1} of ${questions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="emoji-options" id="optionsContainer">
+                        ${question.options.map(opt => `
+                            <div class="emoji-card ${answers[question.id] === opt.value ? 'selected' : ''}" 
+                                 onclick="selectEmojiAnswer(${question.id}, '${opt.value}', this)"
+                                 data-value="${opt.value}">
+                                <span class="emoji">${opt.emoji}</span>
+                                <span class="emoji-label">${opt.text}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -681,21 +733,21 @@
             localStorage.setItem('allUsersData', JSON.stringify(allUsers));
         }
 
-        function selectOption(questionId, value) {
+        function selectEmojiAnswer(questionId, value, el) {
+            // Deselect all cards in this question
+            el.closest('.emoji-options').querySelectorAll('.emoji-card').forEach(c => c.classList.remove('selected'));
+            // Select clicked
+            el.classList.add('selected');
+            // Store answer
             answers[questionId] = value;
             localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
-
-            // Update visual selection
-            const options = document.querySelectorAll('.option');
-            options.forEach(opt => {
-                const radio = opt.querySelector('input[type="radio"]');
-                if (radio.name === `q${questionId}`) {
-                    opt.classList.remove('selected');
-                    if (radio.value === value) {
-                        opt.classList.add('selected');
-                    }
-                }
-            });
+            
+            // Record interaction time for analytics
+            if(questionStartTimes[currentQuestionIndex]) {
+               // Reset the timer when they change their answer
+               const timeSpent = Date.now() - questionStartTimes[currentQuestionIndex];
+               questionTimes[questionId] = timeSpent;
+            }
         }
 
         function getNextQuestionIndex(currentIndex) {

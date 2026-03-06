@@ -4,95 +4,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youth Health Analytics Dashboard</title>
+    <title>YouthMind Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --navy: #6d4c41; /* Redefined navy as soft brown to keep variable names intact */
+            --saffron: #ff6b00;
+            --teal: #00b894;
+            --sky: #e8f4fd;
+            --cream: #fffdf9;
+            --coral: #ff4757;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        h1, h2, h3, h4, .poppins {
+            font-family: 'Poppins', sans-serif;
         }
 
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
+        /* Top Header Bar */
+        .top-bar {
+            background-color: var(--navy);
+            color: white;
+            padding: 8px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
         }
 
-        @keyframes gradientFade {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .animate-gradient {
-            background-size: 300% 300%;
-            animation: gradientFade 15s ease infinite;
-        }
-
-        /* Login Page Styles */
-        .login-page {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
-            background-size: 300% 300%;
-            animation: gradientFade 15s ease infinite;
-            min-height: 100vh;
+        .top-bar-left {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            gap: 12px;
         }
 
-        .login-container {
-            max-width: 1200px;
+        .jd-logo-img {
+            height: 48px;
+            width: auto;
+            border-radius: 4px;
+        }
+
+        .top-bar-left-text {
+            line-height: 1.2;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+                padding: 12px;
+            }
+        }
+
+        /* Hero Carousel */
+        .carousel-container {
+            position: relative;
             width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--navy);
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 1;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(109, 76, 65, 0.6);
+            z-index: 1;
+        }
+
+        .carousel-content {
+            position: relative;
+            z-index: 4;
+            max-width: 1000px;
+            padding: 0 40px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+        }
+
+        .tag-pill {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-bottom: 24px;
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .carousel-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .carousel-desc {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-bottom: 32px;
+            max-width: 600px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-view-policy {
+            background-color: var(--saffron);
+            color: white;
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
             align-items: center;
+            gap: 8px;
+            align-self: flex-start;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .branding {
-            display: none;
+        .btn-view-policy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.8);
         }
 
-        .login-form-container {
+        @media (max-width: 768px) {
+            .carousel-title { font-size: 2.5rem; }
+            .carousel-desc { font-size: 1.1rem; }
+            .carousel-content { padding: 0 24px; }
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            z-index: 5;
+        }
+
+        .dot {
+            width: 40px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background-color: var(--saffron);
+            width: 60px;
+        }
+
+        /* Sticky Navbar */
+        .sticky-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--cream);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo-img {
+            height: 36px;
+            width: auto;
+        }
+
+        .nav-brand-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-btn {
+            background-color: var(--saffron);
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .sticky-navbar { padding: 12px 20px; }
+            .nav-brand-text { font-size: 1.1rem; }
+            .nav-btn { padding: 8px 16px; font-size: 14px; }
+        }
+
+        /* Mission Strip */
+        .mission-strip {
+            background: linear-gradient(135deg, #5d4037 0%, #8d6e63 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .mission-headline {
+            font-size: 3rem;
+            font-style: italic;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .mission-sub {
+            font-size: 1.1rem;
+            color: #bbc7e3;
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+        }
+
+        .mission-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-glass-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid var(--saffron);
+            border-radius: 16px;
+            padding: 32px;
+            min-width: 250px;
+            flex: 1;
+            max-width: 320px;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--saffron);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .mission-headline { font-size: 2.2rem; }
+            .mission-strip { padding: 60px 20px; }
+            .stat-glass-bubble { flex: 100%; max-width: 100%; }
+        }
+
+        /* Login Section */
+        .login-section {
+            background-color: var(--sky);
+            padding: 100px 40px;
+            position: relative;
+            clip-path: polygon(0 5vw, 100% 0, 100% 100%, 0 100%);
+            margin-top: -5vw;
+        }
+
+        @media (max-width: 768px) {
+            .login-section {
+                clip-path: none;
+                margin-top: 0;
+                padding: 60px 20px;
+            }
+        }
+
+        .login-card-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
             border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 24px 32px;
             position: relative;
             overflow: hidden;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .login-card::before {
@@ -102,957 +387,875 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
             transform: skewX(-20deg);
             animation: shimmer 3s infinite;
         }
 
-        .login-title {
+        .login-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-logo h1 {
+            font-family: 'Poppins', sans-serif;
             font-size: 28px;
             font-weight: bold;
-            color: #111827;
-            margin-bottom: 8px;
+            color: var(--navy);
+            margin-bottom: 4px;
         }
 
-        .login-subtitle {
-            color: #6b7280;
-            margin-bottom: 32px;
+        .login-logo h1 .highlight { color: #0ea5e9; }
+        .login-logo p { color: #6b7280; font-size: 14px; }
+
+        .l-form-group { margin-bottom: 16px; text-align: left; }
+        .l-form-group label {
+            display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 8px; text-align: left;
         }
 
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        input[type="email"],
-        input[type="password"] {
+        .l-form-input, .l-form-select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.3s;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(4px);
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-dark);
         }
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #3b82f6;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-            transform: translateY(-1px);
+        .l-form-input:focus, .l-form-select:focus {
+            outline: none; border-color: #3b82f6; background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); transform: translateY(-1px);
         }
 
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+        .l-form-select {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; padding-right: 40px;
         }
 
-        .remember-me {
-            display: flex;
-            align-items: center;
+        .l-demographics-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;
+        }
+        .l-demographics-grid .l-form-group { margin-bottom: 0px; }
+        .l-demographics-grid label { font-size: 13px; }
+        @media (max-width: 600px) { .l-demographics-grid { grid-template-columns: 1fr; } }
+
+        .l-form-options {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+        }
+        .l-remember-me { display: flex; align-items: center; font-size: 14px; }
+        .l-remember-me input { margin-right: 8px; }
+
+        .l-forgot-link { color: #0ea5e9; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .l-forgot-link:hover { color: #0284c7; }
+
+        .l-error-message {
+            background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px;
+            border-radius: 8px; margin-bottom: 24px; display: none; font-size: 14px; text-align: left;
+        }
+        .l-error-message.show { display: block; }
+
+        @keyframes subtlePulse {
+            0%, 100% { box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+            50% { box-shadow: 0 4px 20px rgba(14, 165, 233, 0.6); }
         }
 
-        .remember-me input {
-            margin-right: 8px;
+        .l-login-btn {
+            width: 100%; background: linear-gradient(to right, #0ea5e9, #3b82f6); color: white;
+            padding: 12px 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; margin-bottom: 12px; font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); animation: subtlePulse 3s infinite;
+        }
+        .l-login-btn:hover { box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4); transform: translateY(-2px); }
+        .l-login-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
+
+        .l-login-options { display: flex; gap: 12px; margin-top: 16px; margin-bottom: 16px; }
+        .l-login-option-btn {
+            flex: 1; padding: 10px; border: 2px solid #e5e7eb; background: rgba(255, 255, 255, 0.8); border-radius: 8px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s; font-weight: 600; font-family: 'Nunito', sans-serif;
+            color: #6b7280;
+        }
+        .l-login-option-btn.active { border-color: #0ea5e9; background: #f0f9ff; color: #0ea5e9; }
+
+        .l-otp-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb; display: none; text-align: left; }
+        .l-otp-section.active { display: block; }
+
+        .l-otp-input-group { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
+        .l-otp-input {
+            width: 50px; height: 50px; text-align: center; font-size: 20px; font-weight: 600;
+            border: 2px solid #d1d5db; border-radius: 8px; transition: all 0.2s; background: white;
+            font-family: 'Nunito', sans-serif;
+        }
+        .l-otp-input:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+        @media (max-width: 400px) { .l-otp-input { width: 38px; height: 44px; font-size: 16px; } }
+
+        .l-otp-info {
+            background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px;
+            border-radius: 8px; font-size: 14px; margin-bottom: 16px; text-align: left;
         }
 
-        .forgot-link {
-            color: #0ea5e9;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
+        .l-send-otp-btn {
+            width: 100%; background: #10b981; color: white; padding: 12px 16px; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .l-send-otp-btn:hover { background: #059669; }
+        .l-send-otp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .l-demo-box {
+            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px;
+            margin-top: 16px; font-size: 12px; color: #075985; line-height: 1.6; text-align: left;
+        }
+        .l-demo-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding-top: 4px;
         }
 
-        .forgot-link:hover {
-            color: #0284c7;
-        }
-
-        .error-message {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .login-button {
-            width: 100%;
-            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+        /* Footer */
+        .footer {
+            background-color: var(--navy);
             color: white;
-            padding: 14px 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-        }
-
-        .login-button:hover {
-            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .login-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .signup-link {
+            padding: 60px 40px 40px;
             text-align: center;
-            margin-top: 24px;
-            color: #6b7280;
-            font-size: 14px;
         }
 
-        .signup-link a {
-            color: #0ea5e9;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .signup-link a:hover {
-            color: #0284c7;
-        }
-
-        @media (min-width: 768px) {
-            .branding {
-                display: block;
-            }
-
-            .mobile-title {
-                display: none;
-            }
-        }
-
-        .branding h1 {
-            font-size: 48px;
-            font-weight: bold;
-            color: #111827;
-            margin-bottom: 16px;
-        }
-
-        .branding h1 .highlight {
-            color: #0ea5e9;
-            display: block;
-        }
-
-        .branding p {
-            font-size: 20px;
-            color: #6b7280;
-            margin-bottom: 32px;
-        }
-
-        .feature {
-            display: flex;
-            align-items: start;
-            margin-bottom: 24px;
-        }
-
-        .feature-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #e0f2fe;
+        .footer-logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            flex-shrink: 0;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        .feature-icon svg {
-            width: 16px;
-            height: 16px;
-            color: #0ea5e9;
+        .footer-logo img {
+            height: 48px;
+            border-radius: 4px;
+            /* Invert colors or use brightness filter if it's a dark logo to make it visible on navy */
+            filter: brightness(0) invert(1); 
         }
 
-        .feature-content h3 {
+        .footer-logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: left;
+            line-height: 1.2;
+        }
+
+        .footer-desc {
+            font-size: 1.1rem;
+            color: #bbc7e3;
+            margin-bottom: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
             font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--saffron); }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 24px;
+            font-size: 0.9rem;
+            color: #7b859e;
+        }
+
+        /* --- Dashboard Styles --- */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            background: #fffdf9;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header-content h1 {
+            font-size: 28px;
+            font-weight: bold;
             color: #111827;
             margin-bottom: 4px;
         }
 
-        .feature-content p {
+        .dashboard-header-content p {
             color: #6b7280;
             font-size: 14px;
         }
 
-        .mobile-title {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .mobile-title h1 {
-            font-size: 32px;
-            font-weight: bold;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .mobile-title p {
-            color: #6b7280;
-        }
-
-        /* Dashboard Styles */
-        .dashboard-page {
-            display: none;
-            background: #f9fafb;
-            min-height: 100vh;
-        }
-
-        .dashboard-page.active {
-            display: block;
-        }
-
-        .header {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .dashboard-header-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 12px;
         }
 
-        .header-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #111827;
-        }
-
-        .header-subtitle {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        .logout-button {
-            background: #0ea5e9;
-            color: white;
+        .db-btn {
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            font-size: 14px;
         }
 
-        .logout-button:hover {
-            background: #0284c7;
+        .db-btn-primary {
+            background: linear-gradient(to right, #0ea5e9, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px;
+        .db-btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            transform: translateY(-2px);
         }
 
-        .stats-grid {
+        .db-btn-secondary {
+            background: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .db-btn-secondary:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-container .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 24px;
             margin-bottom: 32px;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .dashboard-container .stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
             padding: 24px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .stat-header {
+        .dashboard-container .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .dashboard-container .stat-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 16px;
         }
 
-        .stat-label {
+        .dashboard-container .stat-label {
             font-size: 14px;
+            color: #6b7280;
             font-weight: 500;
-            color: #6b7280;
+            margin-bottom: 8px;
         }
 
-        .stat-value {
-            font-size: 32px;
+        .dashboard-container .stat-value {
+            font-size: 36px;
             font-weight: bold;
             color: #111827;
+            line-height: 1;
+        }
+
+        .dashboard-container .stat-change {
+            font-size: 12px;
+            color: #10b981;
             margin-top: 8px;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
 
-        .stat-icon.blue {
-            background: #dbeafe;
-        }
-
-        .stat-icon.green {
-            background: #d1fae5;
-        }
-
-        .stat-icon.purple {
-            background: #e9d5ff;
-        }
-
-        .stat-icon.orange {
-            background: #fed7aa;
-        }
-
-        .stat-icon svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .stat-icon.blue svg {
-            color: #2563eb;
-        }
-
-        .stat-icon.green svg {
-            color: #059669;
-        }
-
-        .stat-icon.purple svg {
-            color: #7c3aed;
-        }
-
-        .stat-icon.orange svg {
-            color: #ea580c;
-        }
-
-        .dashboard-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .dashboard-section-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
             padding: 32px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 32px;
         }
 
-        .dashboard-title {
-            font-size: 20px;
+        .section-title {
+            font-size: 24px;
             font-weight: bold;
             color: #111827;
-            margin-bottom: 16px;
-        }
-
-        .dashboard-text {
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* OTP Login Styles */
-        .otp-section {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #e5e7eb;
-            display: none;
-        }
-
-        .otp-section.active {
-            display: block;
-        }
-
-        .otp-input-group {
+            margin-bottom: 24px;
             display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .otp-input {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: 600;
-            border: 2px solid #d1d5db;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-        .otp-input:focus {
-            outline: none;
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-        }
-
-        .otp-info {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .send-otp-btn {
-            width: 100%;
-            background: #10b981;
-            color: white;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 16px;
-        }
-
-        .send-otp-btn:hover {
-            background: #059669;
-        }
-
-        .send-otp-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .login-options {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .login-option-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e5e7eb;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .login-option-btn.active {
-            border-color: #0ea5e9;
-            background: #f0f9ff;
-            color: #0ea5e9;
-        }
-
-        /* Admin Dashboard Styles */
-        .grid {
-            display: grid;
-        }
-
-        .grid-cols-1 {
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-        }
-
-        .grid-cols-3 {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .gap-4 {
-            gap: 1rem;
-        }
-
-        .gap-6 {
-            gap: 1.5rem;
-        }
-
-        .space-y-2>*+* {
-            margin-top: 0.5rem;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .items-center {
             align-items: center;
+            gap: 12px;
+            font-family: inherit;
         }
 
-        .mb-3 {
-            margin-bottom: 0.75rem;
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        .mb-4 {
-            margin-bottom: 1rem;
+        .insight-card {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid #3b82f6;
         }
+        
+        .insight-card:nth-child(2) { border-left-color: #10b981; }
+        .insight-card:nth-child(3) { border-left-color: #f59e0b; }
+        .insight-card:nth-child(4) { border-left-color: #8b5cf6; }
 
-        .mb-6 {
-            margin-bottom: 1.5rem;
-        }
-
-        .mt-6 {
-            margin-top: 1.5rem;
-        }
-
-        .mr-2 {
-            margin-right: 0.5rem;
-        }
-
-        .p-3 {
-            padding: 0.75rem;
-        }
-
-        .p-4 {
-            padding: 1rem;
-        }
-
-        .rounded-lg {
-            border-radius: 0.5rem;
-        }
-
-        .bg-blue-50 {
-            background-color: #eff6ff;
-        }
-
-        .bg-green-50 {
-            background-color: #f0fdf4;
-        }
-
-        .bg-orange-50 {
-            background-color: #fff7ed;
-        }
-
-        .bg-red-50 {
-            background-color: #fef2f2;
-        }
-
-        .text-blue-600 {
-            color: #2563eb;
-        }
-
-        .text-green-600 {
-            color: #16a34a;
-        }
-
-        .text-orange-600 {
-            color: #ea580c;
-        }
-
-        .text-red-600 {
-            color: #dc2626;
-        }
-
-        .text-gray-700 {
-            color: #374151;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-        }
-
-        .text-lg {
-            font-size: 1.125rem;
-        }
-
-        .text-xl {
-            font-size: 1.25rem;
-        }
-
-        .text-2xl {
-            font-size: 1.5rem;
-        }
-
-        .font-bold {
-            font-weight: 700;
-        }
-
-        .font-semibold {
+        .insight-label {
+            font-size: 13px;
+            color: #4b5563;
             font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        @media (min-width: 768px) {
-            .md\:grid-cols-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
+        .insight-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3a8a;
         }
 
-        /* Mobile specific adjustments */
+        .issues-list {
+            margin-top: 32px;
+        }
+
+        .issue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border: 1px solid #fee2e2;
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .issue-name {
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .issue-count {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            margin-top: 40px;
+            height: 400px;
+            width: 100%;
+        }
+
         @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-                margin: 20px;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            }
-
-            .branding {
-                padding: 32px 24px;
-            }
-
-            .branding h1 {
-                font-size: 32px;
-            }
-
-            .login-form-container {
-                padding: 32px 24px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .header-content {
+            .dashboard-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 16px;
+                padding: 20px;
             }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .dashboard-header-actions {
+                width: 100%;
+                flex-wrap: wrap;
             }
+            .db-btn { width: 100%; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .dashboard-container { padding: 40px 20px; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Login Page -->
-    <div id="loginPage" class="login-page animate-gradient">
-        <div class="login-container">
-            <!-- Branding Section (Desktop) -->
-            <div class="branding">
-                <h1>
-                    Youth Health
-                    <span class="highlight">Analytics Dashboard</span>
-                </h1>
-                <p>Empowering data-driven decisions for youth health and wellness</p>
 
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Comprehensive Analytics</h3>
-                        <p>Track and analyze youth health metrics</p>
-                    </div>
-                </div>
-
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Real-time Insights</h3>
-                        <p>Get instant access to health trends and patterns</p>
-                    </div>
-                </div>
-
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Secure & Private</h3>
-                        <p>Your data is protected with enterprise-grade security</p>
-                    </div>
-                </div>
+    <!-- Section 1: Top Header Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <img src="1772829792491_image.png" alt="JD College Logo" class="jd-logo-img" onerror="this.style.display='none';">
+            <div class="top-bar-left-text">
+                Unified system for knowing early stage of depression
             </div>
+        </div>
+        <div style="font-weight: 600; font-size: 14px;">
+            Youth Health-care dashboard
+        </div>
+    </div>
 
-            <!-- Login Form -->
-            <div class="login-form-container">
-                <div class="login-card">
-                    <div class="mobile-title">
-                        <h1>Youth Health Analytics</h1>
-                        <p>Welcome back</p>
+    <!-- Section 2: Policy Carousel -->
+    <section class="carousel-container" id="heroCarousel">
+        <div class="carousel-overlay"></div>
+        
+        <!-- Slide 1 -->
+        <div class="carousel-slide active" style="background-image: url('https://rajras.in/wp-content/uploads/2020/09/Kiran-Helpline-for-Mental-Health.jpg');">
+            <div class="carousel-content">
+                <div class="tag-pill">Mental Health</div>
+                <h1 class="carousel-title poppins">NIMHANS National Mental Health Programme</h1>
+                <p class="carousel-desc">Advancing mental health research & treatment across India</p>
+                <a href="https://nimhans.ac.in" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-slide" style="background-image: url('https://rajras.in/wp-content/uploads/2020/09/Kiran-Helpline-for-Mental-Health.jpg');">
+            <div class="carousel-content">
+                <div class="tag-pill">Helpline</div>
+                <h1 class="carousel-title poppins">Kiran Helpline — Free 24/7 Support</h1>
+                <p class="carousel-desc">Confidential mental health helpline in 13 Indian languages</p>
+                <a href="https://icallhelpline.org" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=1400');">
+            <div class="carousel-content">
+                <div class="tag-pill">Policy</div>
+                <h1 class="carousel-title poppins">National Mental Health Policy 2014</h1>
+                <p class="carousel-desc">India's framework for equitable, rights-based mental healthcare</p>
+                <a href="https://nhm.gov.in/New_Updates_2018/NHM_Components/Mental_Health/National_Mental_Health_Policy_2014.pdf" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="carousel-slide" style="background-image: url('https://pbs.twimg.com/media/Ez4NTPsVoAA9WU_.jpg');">
+            <div class="carousel-content">
+                <div class="tag-pill">Education</div>
+                <h1 class="carousel-title poppins">Manodarpan — Ministry of Education</h1>
+                <p class="carousel-desc">Psychosocial support for students, teachers & families</p>
+                <a href="https://manodarpan.iitb.ac.in" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1400');">
+            <div class="carousel-content">
+                <div class="tag-pill">Insurance</div>
+                <h1 class="carousel-title poppins">Ayushman Bharat — Mental Health</h1>
+                <p class="carousel-desc">Insurance coverage for mental health treatment nationwide</p>
+                <a href="https://pmjay.gov.in" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="carousel-slide" style="background-image: url('https://img.youtube.com/vi/E3zzhWYSF7U/maxresdefault.jpg');">
+            <div class="carousel-content">
+                <div class="tag-pill">Youth Affairs</div>
+                <h1 class="carousel-title poppins">MoYAS — Youth Wellbeing Index</h1>
+                <p class="carousel-desc">Tracking and improving wellbeing of India's youth</p>
+                <a href="https://yas.nic.in" target="_blank" class="btn-view-policy">View Policy &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Dots -->
+        <div class="carousel-dots" id="carouselDots">
+            <div class="dot active" data-index="0"></div>
+            <div class="dot" data-index="1"></div>
+            <div class="dot" data-index="2"></div>
+            <div class="dot" data-index="3"></div>
+            <div class="dot" data-index="4"></div>
+            <div class="dot" data-index="5"></div>
+        </div>
+    </section>
+
+    <!-- Section 3: Sticky Navbar -->
+    <nav class="sticky-navbar" id="stickyNavbar">
+        <a href="#" class="nav-brand">
+            <img src="1772829792491_image.png" alt="JD Logo" class="nav-logo-img" onerror="this.style.display='none';">
+            <span class="nav-brand-text">YouthMind Analytics</span>
+        </a>
+        <a href="#loginSection" class="nav-btn">Sign In &rarr;</a>
+    </nav>
+
+    <!-- Section 4: Hero Mission Strip -->
+    <section class="mission-strip">
+        <h2 class="mission-headline">"Every young mind deserves to be heard."</h2>
+        <p class="mission-sub">An interactive platform dedicated to analyzing youth mental health, providing actionable insights, and serving as a unified system for early detection of depression.</p>
+        
+        <div class="mission-stats">
+            <div class="stat-glass-bubble">
+                <div class="stat-icon">🧑‍🤝‍🧑</div>
+                <div class="stat-value">300+</div>
+                <div class="stat-label">Youth Surveyed</div>
+            </div>
+            <div class="stat-glass-bubble">
+                <div class="stat-icon">🧠</div>
+                <div class="stat-value">9</div>
+                <div class="stat-label">Health Indicators Tracked</div>
+            </div>
+            <div class="stat-glass-bubble">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">Live</div>
+                <div class="stat-label">Real-Time Insights Generated</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Unified Login Section -->
+    <section class="login-section" id="loginSection">
+        <div class="login-card-wrapper">
+            <div class="login-card">
+                <div class="login-logo">
+                    <h1>Youth Health <span class="highlight">Analytics</span></h1>
+                    <p>Unified Access Portal</p>
+                </div>
+
+                <div class="l-login-options">
+                    <button class="l-login-option-btn active" id="passwordLoginBtn" onclick="switchLoginMode('password')">Password Login</button>
+                    <button class="l-login-option-btn" id="otpLoginBtn" onclick="switchLoginMode('otp')">OTP Login</button>
+                </div>
+
+                <!-- Password Login Form -->
+                <form id="unifiedLoginForm" class="login-form">
+                    <div class="l-form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="l-form-input" placeholder="Enter your email" required>
                     </div>
 
-                    <div class="branding">
-                        <h2 class="login-title">Welcome back</h2>
-                        <p class="login-subtitle">Sign in to access your dashboard</p>
+                    <div class="l-form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="l-form-input" placeholder="Enter your password" required>
                     </div>
 
-                    <div class="login-options">
-                        <button class="login-option-btn active" id="passwordLoginBtn"
-                            onclick="switchLoginMode('password')">Password Login</button>
-                        <button class="login-option-btn" id="otpLoginBtn" onclick="switchLoginMode('otp')">OTP
-                            Login</button>
-                    </div>
-
-                    <!-- Password Login Form -->
-                    <form id="loginForm" class="login-form">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <div style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 8px; text-align: left;">Demographics (for participants only)</div>
+                    <div class="l-demographics-grid">
+                        <div class="l-form-group">
+                            <label for="userAge">Age Group</label>
+                            <select id="userAge" name="userAge" class="l-form-select">
+                                <option value="">Select age</option>
+                                <option value="13-17">13-17</option>
+                                <option value="18-22">18-22</option>
+                                <option value="23-27">23-27</option>
+                                <option value="28-32">28-32</option>
+                                <option value="33+">33+</option>
+                            </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Enter your password"
-                                required>
+                        <div class="l-form-group">
+                            <label for="userGender">Gender</label>
+                            <select id="userGender" name="userGender" class="l-form-select">
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="non-binary">Non-binary</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
                         </div>
 
-                        <div class="form-options">
-                            <div class="remember-me">
-                                <input type="checkbox" id="remember" name="remember">
-                                <label for="remember" style="margin: 0; font-weight: normal;">Remember me</label>
+                        <div class="l-form-group">
+                            <label for="userProfession">Current Status</label>
+                            <select id="userProfession" name="userProfession" class="l-form-select">
+                                <option value="">Select status</option>
+                                <option value="student">Student</option>
+                                <option value="working">Working</option>
+                                <option value="both">Both</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="l-form-options">
+                        <div class="l-remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember" style="margin: 0; font-weight: normal;">Remember me</label>
+                        </div>
+                        <a href="#" class="l-forgot-link">Forgot password?</a>
+                    </div>
+
+                    <div class="l-error-message" id="errorMessage"></div>
+
+                    <button type="submit" class="l-login-btn" id="loginButton">Sign in</button>
+                </form>
+
+                <!-- OTP Login Form -->
+                <form id="otpLoginForm" class="login-form" style="display: none;">
+                    <div class="l-form-group">
+                        <label for="otpEmail">Email Address</label>
+                        <input type="email" id="otpEmail" name="otpEmail" class="l-form-input" placeholder="Enter your email" required>
+                    </div>
+
+                    <div style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 8px; text-align: left;">Demographics (for participants only)</div>
+                    <div class="l-demographics-grid">
+                        <div class="l-form-group">
+                            <label for="otpUserAge">Age Group</label>
+                            <select id="otpUserAge" name="otpUserAge" class="l-form-select">
+                                <option value="">Select age</option>
+                                <option value="13-17">13-17</option>
+                                <option value="18-22">18-22</option>
+                                <option value="23-27">23-27</option>
+                                <option value="28-32">28-32</option>
+                                <option value="33+">33+</option>
+                            </select>
+                        </div>
+
+                        <div class="l-form-group">
+                            <label for="otpUserGender">Gender</label>
+                            <select id="otpUserGender" name="otpUserGender" class="l-form-select">
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="non-binary">Non-binary</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                        </div>
+
+                        <div class="l-form-group">
+                            <label for="otpUserProfession">Current Status</label>
+                            <select id="otpUserProfession" name="otpUserProfession" class="l-form-select">
+                                <option value="">Select status</option>
+                                <option value="student">Student</option>
+                                <option value="working">Working</option>
+                                <option value="both">Both</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="l-send-otp-btn" id="sendOtpBtn" onclick="sendOTP()">Send OTP</button>
+
+                    <div class="l-otp-section" id="otpSection">
+                        <div class="l-otp-info">
+                            <strong>OTP Sent!</strong> Check your email for the 6-digit code. (Demo: OTP is <span id="demoOtp" style="font-weight: bold;"></span>)
+                        </div>
+                        <div class="l-form-group">
+                            <label>Enter OTP</label>
+                            <div class="l-otp-input-group">
+                                <input type="text" class="l-otp-input" id="otp1" maxlength="1" oninput="moveToNext(this, 'otp2')" onkeyup="handleOtpKeyup(event, 'otp1', null)">
+                                <input type="text" class="l-otp-input" id="otp2" maxlength="1" oninput="moveToNext(this, 'otp3')" onkeyup="handleOtpKeyup(event, 'otp2', 'otp1')">
+                                <input type="text" class="l-otp-input" id="otp3" maxlength="1" oninput="moveToNext(this, 'otp4')" onkeyup="handleOtpKeyup(event, 'otp3', 'otp2')">
+                                <input type="text" class="l-otp-input" id="otp4" maxlength="1" oninput="moveToNext(this, 'otp5')" onkeyup="handleOtpKeyup(event, 'otp4', 'otp3')">
+                                <input type="text" class="l-otp-input" id="otp5" maxlength="1" oninput="moveToNext(this, 'otp6')" onkeyup="handleOtpKeyup(event, 'otp5', 'otp4')">
+                                <input type="text" class="l-otp-input" id="otp6" maxlength="1" onkeyup="handleOtpKeyup(event, 'otp6', 'otp5')">
                             </div>
-                            <a href="#" class="forgot-link">Forgot password?</a>
                         </div>
 
-                        <div class="error-message" id="errorMessage"></div>
+                        <div class="l-error-message" id="otpErrorMessage"></div>
 
-                        <button type="submit" class="login-button" id="loginButton">Sign in</button>
-                    </form>
-
-                    <!-- OTP Login Form -->
-                    <form id="otpLoginForm" class="login-form" style="display: none;">
-                        <div class="form-group">
-                            <label for="otpEmail">Email Address</label>
-                            <input type="email" id="otpEmail" name="otpEmail" placeholder="Enter your email" required>
-                        </div>
-
-                        <button type="button" class="send-otp-btn" id="sendOtpBtn" onclick="sendOTP()">Send OTP</button>
-
-                        <div class="otp-section" id="otpSection">
-                            <div class="otp-info">
-                                <strong>OTP Sent!</strong> Check your email for the 6-digit code. (Demo: OTP is <span
-                                    id="demoOtp" style="font-weight: bold;"></span>)
-                            </div>
-                            <div class="form-group">
-                                <label>Enter OTP</label>
-                                <div class="otp-input-group">
-                                    <input type="text" class="otp-input" id="otp1" maxlength="1"
-                                        oninput="moveToNext(this, 'otp2')"
-                                        onkeyup="handleOtpKeyup(event, 'otp1', null)">
-                                    <input type="text" class="otp-input" id="otp2" maxlength="1"
-                                        oninput="moveToNext(this, 'otp3')"
-                                        onkeyup="handleOtpKeyup(event, 'otp2', 'otp1')">
-                                    <input type="text" class="otp-input" id="otp3" maxlength="1"
-                                        oninput="moveToNext(this, 'otp4')"
-                                        onkeyup="handleOtpKeyup(event, 'otp3', 'otp2')">
-                                    <input type="text" class="otp-input" id="otp4" maxlength="1"
-                                        oninput="moveToNext(this, 'otp5')"
-                                        onkeyup="handleOtpKeyup(event, 'otp4', 'otp3')">
-                                    <input type="text" class="otp-input" id="otp5" maxlength="1"
-                                        oninput="moveToNext(this, 'otp6')"
-                                        onkeyup="handleOtpKeyup(event, 'otp5', 'otp4')">
-                                    <input type="text" class="otp-input" id="otp6" maxlength="1"
-                                        onkeyup="handleOtpKeyup(event, 'otp6', 'otp5')">
-                                </div>
-                            </div>
-
-                            <div class="error-message" id="otpErrorMessage"></div>
-
-                            <button type="submit" class="login-button" id="verifyOtpBtn">Verify OTP</button>
-                        </div>
-                    </form>
-
-                    <div
-                        style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; margin-top: 24px; margin-bottom: 16px;">
-                        <p style="font-size: 13px; color: #0c4a6e; margin-bottom: 8px; font-weight: 600;">📋 Admin Test
-                            Credentials:</p>
-                        <div style="font-size: 12px; color: #075985; line-height: 1.8;">
-                            <div><strong>Email:</strong> admin@health.com | <strong>Password:</strong> admin123</div>
-                            <div style="margin-top: 4px; color: #64748b; font-size: 11px;">(Or use any email/password
-                                for demo)</div>
-                        </div>
+                        <button type="submit" class="l-login-btn" id="verifyOtpBtn">Verify OTP</button>
                     </div>
+                </form>
 
-                    <div class="signup-link">
-                        Don't have an account? <a href="#">Contact administrator</a>
-                    </div>
-                    <div
-                        style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-                        <a href="user-login.html" style="color: #6b7280; text-decoration: none; font-size: 13px;">User
-                            Login →</a>
+                <div class="l-demo-box">
+                    <div style="font-weight: 700; margin-bottom: 8px;">📋 Test Credentials:</div>
+                    <div class="l-demo-grid">
+                        <div><strong>E:</strong> admin@health.com</div><div><strong>P:</strong> admin123</div>
+                        <div><strong>E:</strong> researcher@health.com</div><div><strong>P:</strong> researcher123</div>
+                        <div><strong>E:</strong> student@health.com</div><div><strong>P:</strong> student123</div>
+                        <div><strong>E:</strong> test@health.com</div><div><strong>P:</strong> test123</div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Section 5.5: Dashboard Dashboard -->
+    <div class="dashboard-container" id="dashboardPreview">
+        <div class="dashboard-header">
+            <div class="dashboard-header-content">
+                <h1>Youth Health <span style="color: #1e3a8a;">Analytics</span></h1>
+                <p>Real-time Dashboard - User Portal</p>
+            </div>
+            <div class="dashboard-header-actions">
+                <a href="questionnaire.html" class="db-btn db-btn-primary" id="questionnaireBtn">Take Assessment</a>
+                <button class="db-btn db-btn-primary" id="aiHelperBtn" onclick="playAIInsights()"
+                    style="background: linear-gradient(to right, #8b5cf6, #3b82f6); border: none; color: white;">
+                    🎤 AI Helper
+                </button>
+                <button class="db-btn db-btn-secondary" onclick="loadDashboardData()">Regenerate Data (300 Users)</button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Total Participants</div>
+                        <div class="stat-value" id="totalParticipants">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Active Programs</div>
+                        <div class="stat-value" id="activePrograms">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Health Reports Generated</div>
+                        <div class="stat-value" id="healthReports">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Completion Rate</div>
+                        <div class="stat-value" id="completionRate">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Insights & Analytics Section -->
+        <div>
+            <h2 class="section-title">User Insights & Analytics</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-label">Total Users Logged In</div>
+                    <div class="insight-value" id="totalUsers">0</div>
+                </div>
+                <div class="insight-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);">
+                    <div class="insight-label">Completed Assessments</div>
+                    <div class="insight-value" id="completedAssessments">0</div>
+                </div>
+                <div class="insight-card" style="background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);">
+                    <div class="insight-label">Users Needing Support</div>
+                    <div class="insight-value" id="usersNeedingSupport">0</div>
+                </div>
+                <div class="insight-card" style="background: linear-gradient(135deg, #fdf4ff 0%, #e9d5ff 100%);">
+                    <div class="insight-label">Average Health Score</div>
+                    <div class="insight-value" id="avgHealthScore">0 / 10</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section-box">
+                <h3 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 16px;">Common Health Issues Identified</h3>
+                <div id="issuesList">
+                    <div style="color: #6b7280;">No health issues data available yet.</div>
+                </div>
+            </div>
+
+            <!-- Optional: Chart -->
+            <div class="chart-container" style="display: none;">
+                <canvas id="issuesChart"></canvas>
+            </div>
+        </div>
     </div>
 
-    <!-- Dashboard Page -->
-    <div id="dashboardPage" class="dashboard-page">
-        <header class="header">
-            <div class="header-content">
-                <div>
-                    <h1 class="header-title">Youth Health Analytics Dashboard</h1>
-                    <p class="header-subtitle">Welcome to your dashboard</p>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <a href="admin-analytics.html"
-                        style="background: #0ea5e9; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">Analytics
-                        Dashboard</a>
-                    <button class="logout-button" onclick="handleLogout()">Logout</button>
-                </div>
-            </div>
-        </header>
+    <!-- Section 6: Footer -->
+    <footer class="footer">
+        <div class="footer-logo">
+            <img src="1772829792491_image.png" alt="JD Logo" onerror="this.style.display='none';">
+            <div class="footer-logo-text">JD College of<br>Engineering & Management</div>
+        </div>
+        
+        <p class="footer-desc">YouthMind Analytics — A youth mental health research initiative.</p>
+        
+        <div class="footer-links">
+            <a href="user-login.html">Participant Portal Alternate</a>
+            <a href="#loginSection">Researcher Login</a>
+            <a href="admin-analytics.html">Admin Dashboard</a>
+            <a href="#loginSection">Admin Login</a>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; designed by Abhay, Vibhanshu, Rijul and Khushab of CSE(DS)-A, Group No. 02
+        </div>
+    </footer>
 
-        <main class="main-content">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-label">Total Participants</div>
-                            <div class="stat-value" id="adminTotalParticipants">0</div>
-                        </div>
-                        <div class="stat-icon blue">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                </path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-label">Active Programs</div>
-                            <div class="stat-value" id="adminActivePrograms">0</div>
-                        </div>
-                        <div class="stat-icon green">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-label">Health Reports Generated</div>
-                            <div class="stat-value" id="adminHealthReports">0</div>
-                        </div>
-                        <div class="stat-icon purple">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-label">Completion Rate</div>
-                            <div class="stat-value" id="adminCompletionRate">0%</div>
-                        </div>
-                        <div class="stat-icon orange">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- User Insights Section -->
-            <div class="dashboard-card" style="margin-bottom: 24px;">
-                <h2 class="dashboard-title">User Insights & Analytics</h2>
-                <div id="userInsights">
-                    <p class="dashboard-text" style="margin-bottom: 16px;">Viewing aggregated user health data from
-                        questionnaires</p>
-                    <div
-                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                        <div style="background: #eff6ff; padding: 16px; border-radius: 8px;">
-                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Total Users Logged In</p>
-                            <p style="font-size: 24px; font-weight: bold; color: #2563eb;" id="totalUsers">0</p>
-                        </div>
-                        <div style="background: #f0fdf4; padding: 16px; border-radius: 8px;">
-                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Completed Assessments</p>
-                            <p style="font-size: 24px; font-weight: bold; color: #16a34a;" id="completedAssessments">0
-                            </p>
-                        </div>
-                        <div style="background: #fff7ed; padding: 16px; border-radius: 8px;">
-                            <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Users Needing Support</p>
-                            <p style="font-size: 24px; font-weight: bold; color: #ea580c;" id="usersNeedingSupport">0
-                            </p>
-                        </div>
-                    </div>
-                    <div id="commonIssues">
-                        <h3 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 12px;">Common
-                            Health Issues Identified</h3>
-                        <div id="issuesList"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <h2 class="dashboard-title">Dashboard Overview</h2>
-                <p class="dashboard-text">
-                    Monitor user health trends, track assessment completions, and identify areas where users need
-                    additional support.
-                </p>
-            </div>
-        </main>
-    </div>
-
+    <!-- JavaScript -->
     <script>
-        const loginPage = document.getElementById('loginPage');
-        const dashboardPage = document.getElementById('dashboardPage');
-        const loginForm = document.getElementById('loginForm');
+        // === CAROUSEL LOGIC ===
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            const carouselContainer = document.getElementById('heroCarousel');
+            let currentSlide = 0;
+            let slideInterval;
+
+            function showSlide(n) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                currentSlide = (n + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+                dots[currentSlide].classList.add('active');
+            }
+            function nextSlide() { showSlide(currentSlide + 1); }
+            function startSlideShow() { slideInterval = setInterval(nextSlide, 4000); }
+            function stopSlideShow() { clearInterval(slideInterval); }
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    showSlide(index);
+                    stopSlideShow();
+                    startSlideShow();
+                });
+            });
+            carouselContainer.addEventListener('mouseenter', stopSlideShow);
+            carouselContainer.addEventListener('mouseleave', startSlideShow);
+            startSlideShow();
+        });
+
+
+        // === AUTHENTICATION LOGIC ===
+        const unifiedLoginForm = document.getElementById('unifiedLoginForm');
         const otpLoginForm = document.getElementById('otpLoginForm');
         const errorMessage = document.getElementById('errorMessage');
         const otpErrorMessage = document.getElementById('otpErrorMessage');
         const loginButton = document.getElementById('loginButton');
         const sendOtpBtn = document.getElementById('sendOtpBtn');
         const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-
         let generatedOTP = '';
         let otpExpiryTime = null;
 
-        // Check if already logged in
-        function checkAuth() {
+        window.addEventListener('load', () => {
             if (localStorage.getItem('isAuthenticated') === 'true') {
-                showDashboard();
-            } else {
-                showLogin();
+                window.location.href = 'admin-analytics.html';
             }
-        }
+        });
 
-        function showLogin() {
-            loginPage.style.display = 'flex';
-            dashboardPage.classList.remove('active');
-        }
-
-        // Switch between password and OTP login
         function switchLoginMode(mode) {
             const passwordBtn = document.getElementById('passwordLoginBtn');
             const otpBtn = document.getElementById('otpLoginBtn');
@@ -1060,152 +1263,114 @@
             if (mode === 'password') {
                 passwordBtn.classList.add('active');
                 otpBtn.classList.remove('active');
-                loginForm.style.display = 'block';
+                unifiedLoginForm.style.display = 'block';
                 otpLoginForm.style.display = 'none';
                 document.getElementById('otpSection').classList.remove('active');
                 clearOtpInputs();
             } else {
                 passwordBtn.classList.remove('active');
                 otpBtn.classList.add('active');
-                loginForm.style.display = 'none';
+                unifiedLoginForm.style.display = 'none';
                 otpLoginForm.style.display = 'block';
             }
         }
 
-        // Generate 6-digit OTP
-        function generateOTP() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
         }
 
-        // Send OTP
-        function sendOTP() {
-            const email = document.getElementById('otpEmail').value;
-
-            if (!email) {
-                showOtpError('Please enter your email address');
-                return;
-            }
-
-            // Validate email format
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showOtpError('Please enter a valid email address');
-                return;
-            }
-
-            // Generate OTP
-            generatedOTP = generateOTP();
-            otpExpiryTime = Date.now() + (5 * 60 * 1000); // 5 minutes
-
-            // Store OTP in localStorage for demo
-            localStorage.setItem('adminOTP', generatedOTP);
-            localStorage.setItem('adminOTPEmail', email);
-            localStorage.setItem('adminOTPExpiry', otpExpiryTime.toString());
-
-            // Show OTP section
-            document.getElementById('otpSection').classList.add('active');
-            document.getElementById('demoOtp').textContent = generatedOTP;
-
-            // Disable send button temporarily
-            sendOtpBtn.disabled = true;
-            sendOtpBtn.textContent = 'OTP Sent!';
-
-            // Re-enable after 30 seconds
-            setTimeout(() => {
-                sendOtpBtn.disabled = false;
-                sendOtpBtn.textContent = 'Resend OTP';
-            }, 30000);
-
-            // Clear previous OTP inputs
-            clearOtpInputs();
-            document.getElementById('otp1').focus();
-        }
-
-        // OTP Login
-        otpLoginForm.addEventListener('submit', function (e) {
+        // Unified Password Form
+        unifiedLoginForm.addEventListener('submit', function (e) {
             e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-            const enteredOTP = getEnteredOTP();
-            const storedOTP = localStorage.getItem('adminOTP');
-            const storedEmail = localStorage.getItem('adminOTPEmail');
-            const expiryTime = parseInt(localStorage.getItem('adminOTPExpiry') || '0');
-            const currentEmail = document.getElementById('otpEmail').value;
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
 
-            // Hide previous errors
-            otpErrorMessage.classList.remove('show');
-            otpErrorMessage.textContent = '';
+            if (!email || !password) { showError('Please enter both email and password'); return; }
 
-            // Validate OTP length
-            if (enteredOTP.length !== 6) {
-                showOtpError('Please enter the complete 6-digit OTP');
-                return;
-            }
+            const age = document.getElementById('userAge').value;
+            const gender = document.getElementById('userGender').value;
+            const profession = document.getElementById('userProfession').value;
 
-            // Check if OTP expired
-            if (Date.now() > expiryTime) {
-                showOtpError('OTP has expired. Please request a new one.');
-                document.getElementById('otpSection').classList.remove('active');
-                clearOtpInputs();
-                return;
-            }
+            loginButton.disabled = true;
+            loginButton.textContent = 'Signing in...';
 
-            // Check email match
-            if (currentEmail !== storedEmail) {
-                showOtpError('Email does not match. Please request a new OTP.');
-                return;
-            }
+            setTimeout(() => {
+                const validUsers = [
+                    { email: 'admin@health.com', password: 'admin123', type: 'admin' },
+                    { email: 'researcher@health.com', password: 'researcher123', type: 'researcher' },
+                    { email: 'user@health.com', password: 'user123', type: 'youth' },
+                    { email: 'student@health.com', password: 'student123', type: 'youth' },
+                    { email: 'test@health.com', password: 'test123', type: 'youth' },
+                    { email: 'demo@health.com', password: 'demo123', type: 'youth' }
+                ];
 
-            // Verify OTP
-            if (enteredOTP === storedOTP) {
-                // Show loading state
-                verifyOtpBtn.disabled = true;
-                verifyOtpBtn.textContent = 'Verifying...';
+                const user = validUsers.find(u => u.email === email && u.password === password);
 
-                setTimeout(() => {
-                    // Store authentication
-                    localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('userEmail', currentEmail);
+                if (user) {
+                    if (user.type === 'youth') {
+                        if (!age || !gender || !profession) {
+                            showError('Youth participants must select their Age, Gender, and Status.');
+                            loginButton.disabled = false;
+                            loginButton.textContent = 'Sign in';
+                            return;
+                        }
 
-                    // Clear OTP data
-                    localStorage.removeItem('adminOTP');
-                    localStorage.removeItem('adminOTPEmail');
-                    localStorage.removeItem('adminOTPExpiry');
+                        trackUserLogin(email);
+                        localStorage.setItem('userAuthenticated', 'true');
+                        localStorage.setItem('userEmail', email);
 
-                    // Show dashboard
-                    showDashboard();
-                }, 500);
-            } else {
-                showOtpError('Invalid OTP. Please try again.');
-                clearOtpInputs();
-            }
+                        const userDemographics = { age: age, gender: gender, profession: profession };
+                        localStorage.setItem('userDemographics', JSON.stringify(userDemographics));
+                        
+                        const demographicsTracking = JSON.parse(localStorage.getItem('demographicsTracking') || '[]');
+                        const existingIndex = demographicsTracking.findIndex(d => d.email === email);
+                        const demoData = { email: email, age: age, gender: gender, profession: profession, timestamp: Date.now() };
+                        if (existingIndex >= 0) { demographicsTracking[existingIndex] = demoData; } 
+                        else { demographicsTracking.push(demoData); }
+                        localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+
+                        if (localStorage.getItem('questionnaireCompleted') === 'true') {
+                            window.location.href = 'results.html';
+                        } else {
+                            window.location.href = 'questionnaire.html';
+                        }
+                    } else if (user.type === 'admin') {
+                         localStorage.setItem('isAuthenticated', 'true');
+                         localStorage.setItem('userEmail', email);
+                         window.location.href = 'admin-analytics.html';
+                    } else if (user.type === 'researcher') {
+                         localStorage.setItem('researcherAuthenticated', 'true');
+                         localStorage.setItem('userEmail', email);
+                         window.location.href = 'researcher-dashboard.html';
+                    }
+                } else {
+                    showError('Invalid credentials. Please try again.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Sign in';
+                }
+            }, 500);
         });
 
-        // Helper functions for OTP
-        function getEnteredOTP() {
-            return document.getElementById('otp1').value +
-                document.getElementById('otp2').value +
-                document.getElementById('otp3').value +
-                document.getElementById('otp4').value +
-                document.getElementById('otp5').value +
-                document.getElementById('otp6').value;
+        // Track user login function
+        function trackUserLogin(email) {
+            const allLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
+            const existingLogin = allLogins.find(login => login.email === email);
+            if (!existingLogin) {
+                allLogins.push({ email: email, firstLogin: Date.now(), lastLogin: Date.now(), loginCount: 1 });
+            } else {
+                existingLogin.lastLogin = Date.now();
+                existingLogin.loginCount = (existingLogin.loginCount || 1) + 1;
+            }
+            localStorage.setItem('allUserLogins', JSON.stringify(allLogins));
         }
 
-        function clearOtpInputs() {
-            for (let i = 1; i <= 6; i++) {
-                document.getElementById(`otp${i}`).value = '';
-            }
-        }
-
-        function moveToNext(current, nextId) {
-            if (current.value.length === 1 && nextId) {
-                document.getElementById(nextId).focus();
-            }
-        }
-
-        function handleOtpKeyup(event, currentId, prevId) {
-            if (event.key === 'Backspace' && !event.target.value && prevId) {
-                document.getElementById(prevId).focus();
-            }
+        // --- OTP Logic ---
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
         }
 
         function showOtpError(message) {
@@ -1213,32 +1378,277 @@
             otpErrorMessage.classList.add('show');
         }
 
-        function showDashboard() {
-            loginPage.style.display = 'none';
-            dashboardPage.classList.add('active');
-            seedMockData(); // Ensure mock data exists
-            loadAdminDashboardStats();
-            loadUserInsights();
-            // Auto-refresh every 30 seconds
-            if (window.dashboardRefreshInterval) {
-                clearInterval(window.dashboardRefreshInterval);
+        function sendOTP() {
+            const email = document.getElementById('otpEmail').value.trim();
+            if (!email) { showOtpError('Please enter your email address'); return; }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) { showOtpError('Please enter a valid email address'); return; }
+
+            const validUsers = [
+                { email: 'admin@health.com', type: 'admin' },
+                { email: 'researcher@health.com', type: 'researcher' },
+                { email: 'user@health.com', type: 'youth' },
+                { email: 'student@health.com', type: 'youth' },
+                { email: 'test@health.com', type: 'youth' },
+                { email: 'demo@health.com', type: 'youth' }
+            ];
+
+            const userEntry = validUsers.find(u => u.email === email);
+            if (!userEntry) {
+                showOtpError('Please use a registered email address to receive an OTP.');
+                return;
             }
-            window.dashboardRefreshInterval = setInterval(() => {
-                loadAdminDashboardStats();
-                loadUserInsights();
+
+            if (userEntry.type === 'youth') {
+                const age = document.getElementById('otpUserAge').value;
+                const gender = document.getElementById('otpUserGender').value;
+                const profession = document.getElementById('otpUserProfession').value;
+                if (!age || !gender || !profession) {
+                    showOtpError('Youth participants must select their Age, Gender, and Status.');
+                    return;
+                }
+            }
+
+            generatedOTP = generateOTP();
+            otpExpiryTime = Date.now() + (5 * 60 * 1000);
+
+            localStorage.setItem('userOTP', generatedOTP);
+            localStorage.setItem('userOTPEmail', email);
+            localStorage.setItem('userOTPExpiry', otpExpiryTime.toString());
+
+            document.getElementById('otpSection').classList.add('active');
+            document.getElementById('demoOtp').textContent = generatedOTP;
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'OTP Sent!';
+            otpErrorMessage.classList.remove('show');
+
+            setTimeout(() => {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Resend OTP';
             }, 30000);
+
+            clearOtpInputs();
+            document.getElementById('otp1').focus();
+        }
+
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.target.classList.contains('active')) {
+                    setTimeout(() => {
+                        const otp1 = document.getElementById('otp1');
+                        if (otp1) otp1.focus();
+                    }, 100);
+                }
+            });
+        });
+
+        const otpSectionObj = document.getElementById('otpSection');
+        if (otpSectionObj) {
+            observer.observe(otpSectionObj, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        otpLoginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const enteredOTP = getEnteredOTP();
+            const storedOTP = localStorage.getItem('userOTP');
+            const storedEmail = localStorage.getItem('userOTPEmail');
+            const expiryTime = parseInt(localStorage.getItem('userOTPExpiry') || '0');
+            const currentEmail = document.getElementById('otpEmail').value.trim();
+
+            otpErrorMessage.classList.remove('show');
+            otpErrorMessage.textContent = '';
+
+            if (enteredOTP.length !== 6) { showOtpError('Please enter the complete 6-digit OTP'); return; }
+            if (Date.now() > expiryTime) { showOtpError('OTP has expired. Please request a new one.'); document.getElementById('otpSection').classList.remove('active'); clearOtpInputs(); return; }
+            if (currentEmail !== storedEmail) { showOtpError('Email does not match. Please request a new OTP.'); return; }
+
+            if (enteredOTP === storedOTP) {
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.textContent = 'Verifying...';
+
+                setTimeout(() => {
+                    const validUsers = [
+                        { email: 'admin@health.com', type: 'admin' },
+                        { email: 'researcher@health.com', type: 'researcher' },
+                        { email: 'user@health.com', type: 'youth' },
+                        { email: 'student@health.com', type: 'youth' },
+                        { email: 'test@health.com', type: 'youth' },
+                        { email: 'demo@health.com', type: 'youth' }
+                    ];
+                    const user = validUsers.find(u => u.email === currentEmail);
+
+                    if (user) {
+                        localStorage.removeItem('userOTP');
+                        localStorage.removeItem('userOTPEmail');
+                        localStorage.removeItem('userOTPExpiry');
+
+                        if (user.type === 'youth') {
+                            const age = document.getElementById('otpUserAge').value;
+                            const gender = document.getElementById('otpUserGender').value;
+                            const profession = document.getElementById('otpUserProfession').value;
+
+                            trackUserLogin(currentEmail);
+                            localStorage.setItem('userAuthenticated', 'true');
+                            localStorage.setItem('userEmail', currentEmail);
+
+                            const userDemographics = { age: age, gender: gender, profession: profession };
+                            localStorage.setItem('userDemographics', JSON.stringify(userDemographics));
+                            
+                            const demographicsTracking = JSON.parse(localStorage.getItem('demographicsTracking') || '[]');
+                            const existingIndex = demographicsTracking.findIndex(d => d.email === currentEmail);
+                            const demoData = { email: currentEmail, age: age, gender: gender, profession: profession, timestamp: Date.now() };
+                            if (existingIndex >= 0) { demographicsTracking[existingIndex] = demoData; } 
+                            else { demographicsTracking.push(demoData); }
+                            localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
+
+                            if (localStorage.getItem('questionnaireCompleted') === 'true') {
+                                window.location.href = 'results.html';
+                            } else {
+                                window.location.href = 'questionnaire.html';
+                            }
+                        } else if (user.type === 'admin') {
+                            localStorage.setItem('isAuthenticated', 'true');
+                            localStorage.setItem('userEmail', currentEmail);
+                            window.location.href = 'admin-analytics.html';
+                        } else if (user.type === 'researcher') {
+                            localStorage.setItem('researcherAuthenticated', 'true');
+                            localStorage.setItem('userEmail', currentEmail);
+                            window.location.href = 'researcher-dashboard.html';
+                        }
+                    } else {
+                        showOtpError('Invalid email access denied.');
+                        verifyOtpBtn.disabled = false;
+                        verifyOtpBtn.textContent = 'Verify OTP';
+                    }
+                }, 500);
+            } else {
+                showOtpError('Invalid OTP. Please try again.');
+                clearOtpInputs();
+            }
+        });
+
+        function getEnteredOTP() {
+            return document.getElementById('otp1').value + document.getElementById('otp2').value + document.getElementById('otp3').value + document.getElementById('otp4').value + document.getElementById('otp5').value + document.getElementById('otp6').value;
+        }
+
+        function clearOtpInputs() {
+            for (let i = 1; i <= 6; i++) { document.getElementById(`otp${i}`).value = ''; }
+        }
+
+        function moveToNext(current, nextId) {
+            if (current.value.length === 1 && nextId) { document.getElementById(nextId).focus(); }
+        }
+
+        function handleOtpKeyup(event, currentId, prevId) {
+            if (event.key === 'Backspace' && !event.target.value && prevId) { document.getElementById(prevId).focus(); }
+        }
+
+
+        // === DASHBOARD LOGIC ===
+        let issuesChart = null;
+
+        // Load dashboard data on page load
+        window.addEventListener('load', function () {
+            loadDashboardData();
+        });
+
+        function loadDashboardData() {
+            seedMockData(); // Ensure mock data exists
+            // Load all real user data
+            const allUsersData = JSON.parse(localStorage.getItem('allUsersData') || '[]');
+            const allUserLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
+
+            // Calculate real statistics
+            const totalParticipants = allUserLogins.length;
+            const completedAssessments = allUsersData.filter(u =>
+                u.data && u.data.completion && u.data.completion.completed
+            ).length;
+
+            const activePrograms = totalParticipants; // Simplified
+            const healthReports = completedAssessments;
+
+            const completionRate = totalParticipants > 0
+                ? Math.round((completedAssessments / totalParticipants) * 100)
+                : 0;
+
+            let usersNeedingSupport = 0;
+            const allIssues = [];
+            let totalHealthScore = 0;
+            let healthScoreCount = 0;
+
+            allUsersData.forEach(user => {
+                if (user.data && user.data.questionnaire) {
+                    const issues = analyzeUserData(user.data.questionnaire.answers || {});
+                    if (issues.length > 0) {
+                        usersNeedingSupport++;
+                        allIssues.push(...issues);
+                    }
+
+                    // Score out of 10
+                    const healthScore = Math.max(0, 10 - (issues.length * 1.5));
+                    totalHealthScore += healthScore;
+                    healthScoreCount++;
+                }
+            });
+
+            const avgHealthScore = healthScoreCount > 0
+                ? (totalHealthScore / healthScoreCount).toFixed(1)
+                : 0;
+
+            // Update DOM
+            document.getElementById('totalParticipants').textContent = totalParticipants.toLocaleString();
+            document.getElementById('activePrograms').textContent = activePrograms.toLocaleString();
+            document.getElementById('healthReports').textContent = healthReports.toLocaleString();
+            document.getElementById('completionRate').textContent = completionRate + '%';
+
+            document.getElementById('totalUsers').textContent = totalParticipants.toLocaleString();
+            document.getElementById('completedAssessments').textContent = completedAssessments.toLocaleString();
+            document.getElementById('usersNeedingSupport').textContent = usersNeedingSupport.toLocaleString();
+            document.getElementById('avgHealthScore').textContent = avgHealthScore + ' / 10';
+
+            const issueCounts = {};
+            allIssues.forEach(issue => {
+                issueCounts[issue] = (issueCounts[issue] || 0) + 1;
+            });
+
+            const issuesList = document.getElementById('issuesList');
+            const sortedIssues = Object.entries(issueCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            if (sortedIssues.length > 0) {
+                issuesList.innerHTML = sortedIssues.map(([issue, count]) => `
+                    <div class="issue-item">
+                        <div class="issue-name">${issue}</div>
+                        <div class="issue-count">${count}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function analyzeUserData(answers) {
+            const issues = [];
+            if (answers[1] === 'low' || answers[1] === 'very_low' || answers[1] === '1') issues.push('Low Energy Levels');
+            if (answers[2] === '5-6' || answers[2] === 'less_5' || answers[2] === '1') issues.push('Sleep Deprivation');
+            if (answers[3] === 'often' || answers[3] === 'daily' || answers[3] === '4') issues.push('High Stress/Anxiety');
+            if (answers[4] === 'moderate' || answers[4] === 'inactive' || answers[4] === '1') issues.push('Physical Inactivity');
+            if (answers[5] === 'moderate' || answers[5] === 'severe' || answers[5] === '4') issues.push('Physical Pain');
+            if (answers[6] === 'fair' || answers[6] === 'poor' || answers[6] === '1') issues.push('Poor Nutrition');
+            if (answers[7] === 'often' || answers[7] === 'sometimes' || answers[7] === '4') issues.push('Coping Difficulties');
+            if (answers[8] === 'often' || answers[8] === '4') issues.push('Concentration Issues');
+            if (answers[9] === 'fair' || answers[9] === 'poor' || answers[9] === '1') issues.push('Social Isolation');
+            return issues;
         }
 
         function seedMockData() {
             const existingData = localStorage.getItem('allUsersData');
-            if (existingData && JSON.parse(existingData).length > 0) return;
+            if (existingData && JSON.parse(existingData).length >= 300) return;
 
-            console.log("Seeding mock data for analytics...");
-            const numberOfUsers = 50;
-
-            const ages = ['13-17', '18-22', '23-27', '28-32', '33+'];
-            const genders = ['male', 'female', 'non-binary', 'prefer-not-to-say'];
-            const professions = ['student', 'working', 'both', 'other'];
+            const numberOfUsers = 300;
+            const ages = ['13-17', '18-22', '23-27'];
+            const genders = ['male', 'female', 'non-binary'];
+            const professions = ['student', 'working'];
             const answerOptions = {
                 1: ['high', 'moderate', 'low', 'very_low'],
                 2: ['9+', '7-8', '5-6', 'less_5'],
@@ -1254,302 +1664,54 @@
 
             const allUsersData = [];
             const allUserLogins = [];
-            const demographicsTracking = [];
-            const funnelAnalytics = {
-                visited: numberOfUsers + 30,
-                attempted: numberOfUsers + 15,
-                completed: numberOfUsers
-            };
-            const questionAnalytics = {};
 
             for (let i = 1; i <= numberOfUsers; i++) {
                 const email = `mockuser${i}@example.com`;
                 const timestamp = Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000);
-
-                const age = ages[Math.floor(Math.random() * ages.length)];
-                const gender = genders[Math.floor(Math.random() * genders.length)];
-                const profession = professions[Math.floor(Math.random() * professions.length)];
-
                 const answers = {};
-                const questionTimes = {};
                 for (let q = 1; q <= 10; q++) {
                     const opts = answerOptions[q];
                     let selectedIndex;
                     if (q === 2 || q === 3) {
-                        selectedIndex = Math.min(opts.length - 1, Math.floor(Math.random() * 2) + 2);
+                        selectedIndex = Math.min(opts.length - 1, Math.floor(Math.random() * 2) + 2); // bias to higher issues
                     } else {
                         selectedIndex = Math.floor(Math.random() * opts.length);
                     }
                     answers[q] = opts[selectedIndex];
-
-                    const timeSpent = Math.floor(Math.random() * 8000) + 2000;
-                    questionTimes[q] = timeSpent;
-
-                    if (!questionAnalytics[q]) questionAnalytics[q] = [];
-                    questionAnalytics[q].push(timeSpent);
                 }
 
                 allUsersData.push({
                     email: email,
-                    timestamp: timestamp,
-                    lastUpdated: timestamp,
                     data: {
-                        demographics: { age, profession, gender },
-                        questionnaire: {
-                            demographics: { age, profession, gender },
-                            answers: answers,
-                            questionTimes: questionTimes,
-                            completedAt: timestamp + 60000
-                        },
-                        completion: { completed: true, timestamp: timestamp + 60000 }
+                        questionnaire: { answers: answers },
+                        completion: { completed: true }
                     }
                 });
 
-                allUserLogins.push({
-                    email: email,
-                    firstLogin: timestamp - 86400000,
-                    lastLogin: timestamp,
-                    loginCount: Math.floor(Math.random() * 5) + 1
-                });
-
-                demographicsTracking.push({
-                    email: email,
-                    age: age,
-                    gender: gender,
-                    profession: profession,
-                    timestamp: timestamp
-                });
+                allUserLogins.push({ email: email, lastLogin: timestamp });
             }
 
             localStorage.setItem('allUsersData', JSON.stringify(allUsersData));
             localStorage.setItem('allUserLogins', JSON.stringify(allUserLogins));
-            localStorage.setItem('demographicsTracking', JSON.stringify(demographicsTracking));
-            localStorage.setItem('questionAnalytics', JSON.stringify(questionAnalytics));
-            localStorage.setItem('funnelAnalytics', JSON.stringify(funnelAnalytics));
         }
 
-        loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Hide previous errors
-            errorMessage.classList.remove('show');
-            errorMessage.textContent = '';
-
-            // Basic validation
-            if (!email || !password) {
-                showError('Please enter both email and password');
+        function playAIInsights() {
+            const btn = document.getElementById('aiHelperBtn');
+            const originalText = btn.innerHTML;
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
                 return;
             }
-
-            // Show loading state
-            loginButton.disabled = true;
-            loginButton.textContent = 'Signing in...';
-
-            // Simulate API call
-            setTimeout(() => {
-                // For demo, accept any credentials
-                if (email && password) {
-                    // Store authentication
-                    localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('userEmail', email);
-
-                    // Show dashboard
-                    showDashboard();
-                } else {
-                    showError('Invalid credentials');
-                    loginButton.disabled = false;
-                    loginButton.textContent = 'Sign in';
-                }
-            }, 500);
-        });
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
+            btn.innerHTML = '🔊 Speaking...';
+            const participants = document.getElementById('totalParticipants').textContent;
+            const score = document.getElementById('avgHealthScore').textContent;
+            const summaryText = `There are ${participants} total participants. The average health score is ${score}.`;
+            const utterance = new SpeechSynthesisUtterance(summaryText);
+            utterance.onend = () => { btn.innerHTML = originalText; };
+            utterance.onerror = () => { btn.innerHTML = originalText; };
+            window.speechSynthesis.speak(utterance);
         }
 
-        function handleLogout() {
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userEmail');
-            showLogin();
-            // Reset form
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-        }
-
-        // Admin Dashboard - Load User Insights
-        function analyzeUserData(answers) {
-            const issues = [];
-
-            if (answers[1] === 'low' || answers[1] === 'very_low') issues.push('Low Energy Levels');
-            if (answers[2] === '5-6' || answers[2] === 'less_5') issues.push('Sleep Deprivation');
-            if (answers[3] === 'often' || answers[3] === 'daily') issues.push('High Stress/Anxiety');
-            if (answers[4] === 'moderate' || answers[4] === 'inactive') issues.push('Physical Inactivity');
-            if (answers[5] === 'moderate' || answers[5] === 'severe') issues.push('Physical Pain');
-            if (answers[6] === 'fair' || answers[6] === 'poor') issues.push('Poor Nutrition');
-            if (answers[7] === 'often' || answers[7] === 'sometimes') issues.push('Coping Difficulties');
-            if (answers[8] === 'often') issues.push('Concentration Issues');
-            if (answers[9] === 'fair' || answers[9] === 'poor') issues.push('Social Isolation');
-
-            return issues;
-        }
-
-        // Admin Dashboard - Load Real Statistics
-        function loadAdminDashboardStats() {
-            // Load all real user data
-            const allUsersData = JSON.parse(localStorage.getItem('allUsersData') || '[]');
-            const allUserLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
-
-            // Calculate real statistics
-            const totalParticipants = allUserLogins.length;
-            const completedAssessments = allUsersData.filter(u =>
-                u.data && u.data.completion && u.data.completion.completed
-            ).length;
-
-            // Calculate active programs (users who logged in within last 30 days)
-            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-            const activePrograms = allUserLogins.filter(login => {
-                const lastLogin = login.lastLogin || login.firstLogin;
-                return lastLogin >= thirtyDaysAgo;
-            }).length;
-
-            // Calculate health reports (completed assessments with data)
-            const healthReports = allUsersData.filter(u =>
-                u.data && u.data.questionnaire && u.data.completion && u.data.completion.completed
-            ).length;
-
-            // Calculate completion rate
-            const completionRate = totalParticipants > 0
-                ? Math.round((completedAssessments / totalParticipants) * 100)
-                : 0;
-
-            // Update main stat cards
-            const totalParticipantsEl = document.getElementById('adminTotalParticipants');
-            const activeProgramsEl = document.getElementById('adminActivePrograms');
-            const healthReportsEl = document.getElementById('adminHealthReports');
-            const completionRateEl = document.getElementById('adminCompletionRate');
-
-            if (totalParticipantsEl) totalParticipantsEl.textContent = totalParticipants.toLocaleString();
-            if (activeProgramsEl) activeProgramsEl.textContent = activePrograms;
-            if (healthReportsEl) healthReportsEl.textContent = healthReports;
-            if (completionRateEl) completionRateEl.textContent = completionRate + '%';
-        }
-
-        // Admin Dashboard - Load Real User Insights
-        function loadUserInsights() {
-            // Load all real user data
-            const allUsersData = JSON.parse(localStorage.getItem('allUsersData') || '[]');
-            const allUserLogins = JSON.parse(localStorage.getItem('allUserLogins') || '[]');
-
-            // Calculate real statistics
-            const totalUsers = allUserLogins.length;
-            const completedAssessments = allUsersData.filter(u =>
-                u.data && u.data.completion && u.data.completion.completed
-            ).length;
-
-            // Calculate users needing support (those with identified issues)
-            let usersNeedingSupport = 0;
-            const allIssues = [];
-
-            allUsersData.forEach(user => {
-                if (user.data && user.data.questionnaire) {
-                    const issues = analyzeUserData(user.data.questionnaire.answers || {});
-                    if (issues.length > 0) {
-                        usersNeedingSupport++;
-                        allIssues.push(...issues);
-                    }
-                }
-            });
-
-            // Calculate completion rate
-            const completionRate = totalUsers > 0
-                ? Math.round((completedAssessments / totalUsers) * 100)
-                : 0;
-
-            // Update real stats in dashboard
-            const totalUsersEl = document.getElementById('totalUsers');
-            const completedAssessmentsEl = document.getElementById('completedAssessments');
-            const usersNeedingSupportEl = document.getElementById('usersNeedingSupport');
-
-            if (totalUsersEl) totalUsersEl.textContent = totalUsers;
-            if (completedAssessmentsEl) completedAssessmentsEl.textContent = completedAssessments;
-            if (usersNeedingSupportEl) usersNeedingSupportEl.textContent = usersNeedingSupport;
-
-            // Count common issues
-            const issueCounts = {};
-            allIssues.forEach(issue => {
-                issueCounts[issue] = (issueCounts[issue] || 0) + 1;
-            });
-
-            // Display common issues
-            const issuesList = document.getElementById('issuesList');
-            const sortedIssues = Object.entries(issueCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10);
-
-            if (sortedIssues.length > 0) {
-                issuesList.innerHTML = sortedIssues.map(([issue, count]) => `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #fef2f2; border-radius: 8px; margin-bottom: 8px;">
-                        <div>
-                            <span style="color: #dc2626; margin-right: 8px;">⚠️</span>
-                            <span style="color: #374151;">${issue}</span>
-                        </div>
-                        <span style="color: #dc2626; font-weight: 600;">${count} ${count === 1 ? 'user' : 'users'}</span>
-                    </div>
-                `).join('');
-            } else {
-                issuesList.innerHTML = '<p style="color: #6b7280;">No user data available yet. Users need to complete the health assessment.</p>';
-            }
-        }
-
-        function analyzeUserData(answers) {
-            const issues = [];
-
-            if (answers[1] === 'low' || answers[1] === 'very_low') issues.push('Low Energy Levels');
-            if (answers[2] === '5-6' || answers[2] === 'less_5') issues.push('Sleep Deprivation');
-            if (answers[3] === 'often' || answers[3] === 'daily') issues.push('High Stress/Anxiety');
-            if (answers[4] === 'moderate' || answers[4] === 'inactive') issues.push('Physical Inactivity');
-            if (answers[5] === 'moderate' || answers[5] === 'severe') issues.push('Physical Pain');
-            if (answers[6] === 'fair' || answers[6] === 'poor') issues.push('Poor Nutrition');
-            if (answers[7] === 'often' || answers[7] === 'sometimes') issues.push('Coping Difficulties');
-            if (answers[8] === 'often') issues.push('Concentration Issues');
-            if (answers[9] === 'fair' || answers[9] === 'poor') issues.push('Social Isolation');
-
-            return issues;
-        }
-
-        // Auto-focus first OTP input when section becomes visible
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                if (mutation.target.classList.contains('active')) {
-                    setTimeout(() => {
-                        const otp1 = document.getElementById('otp1');
-                        if (otp1) otp1.focus();
-                    }, 100);
-                }
-            });
-        });
-
-        const otpSection = document.getElementById('otpSection');
-        if (otpSection) {
-            observer.observe(otpSection, {
-                attributes: true,
-                attributeFilter: ['class']
-            });
-        }
-
-        // Initialize
-        checkAuth();
-
-        // Load user insights if on dashboard
-        setTimeout(() => {
-            if (dashboardPage.classList.contains('active')) {
-                loadUserInsights();
-            }
-        }, 100);
     </script>
 </body>
 
